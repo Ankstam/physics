@@ -2,34 +2,201 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>m g a v r - 物理公式沙盒</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden}
-body{background:#F4F1EA;font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#26221C;user-select:none;-webkit-user-select:none}
-.ground{position:fixed;left:0;right:0;bottom:20%;height:2px;background:#26221C;opacity:.65;pointer-events:none}
-.cv{position:fixed;left:0;top:0;pointer-events:auto;z-index:0}
-.char{position:fixed;left:0;top:0;line-height:1;font-size:48px;will-change:transform;cursor:grab;touch-action:none;z-index:5}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+html,body{
+  width:100%;
+  height:100%;
+  height:100dvh;
+  overflow:hidden;
+  touch-action:none;
+  -webkit-touch-callout:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+body{
+  background:#F4F1EA;
+  font-family:Georgia,'Times New Roman',serif;
+  font-style:italic;
+  color:#26221C;
+}
+.ground{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:20%;
+  height:2px;
+  background:#26221C;
+  opacity:.65;
+  pointer-events:none;
+}
+.cv{
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  pointer-events:auto;
+  z-index:0;
+  touch-action:none;
+}
+.char{
+  position:fixed;
+  left:0;
+  top:0;
+  line-height:1;
+  font-size:48px;
+  will-change:transform;
+  cursor:grab;
+  touch-action:none;
+  z-index:5;
+}
 .char:active{cursor:grabbing}
-.panel .char{position:static;pointer-events:auto;font-size:30px;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:rgba(255,255,255,.45);border-radius:10px;cursor:grab}
+.panel .char{
+  position:static;
+  pointer-events:auto;
+  font-size:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  background:rgba(255,255,255,.45);
+  border-radius:10px;
+  cursor:grab;
+}
 .panel .char:active{cursor:grabbing}
-@keyframes popin{0%{transform:scale(0);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes popin{
+  0%{transform:scale(0);opacity:0}
+  70%{transform:scale(1.15)}
+  100%{transform:scale(1);opacity:1}
+}
 .dockin{animation:popin .22s ease-out}
-.panel{position:fixed;top:24px;right:24px;display:grid;grid-template-columns:repeat(4,44px);grid-template-rows:repeat(4,44px);gap:6px;padding:10px;border:1px solid rgba(38,34,28,.2);border-radius:14px;background:rgba(255,255,255,.5);pointer-events:none;z-index:3}
-.panel .sep{width:1px;height:30px;background:rgba(38,34,28,.16);flex:none}
-.shadow{position:fixed;left:0;top:0;height:12px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(38,34,28,.45),rgba(38,34,28,0) 70%);pointer-events:none;will-change:transform,opacity;display:none}
-.handle{position:fixed;left:0;top:0;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid rgba(38,34,28,.35);box-shadow:0 3px 10px rgba(38,34,28,.14);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .18s;cursor:grab;z-index:6}
+.panel{
+  position:fixed;
+  top:max(16px, env(safe-area-inset-top));
+  right:max(16px, env(safe-area-inset-right));
+  display:grid;
+  grid-template-columns:repeat(4,44px);
+  grid-template-rows:repeat(4,44px);
+  gap:6px;
+  padding:10px;
+  border:1px solid rgba(38,34,28,.2);
+  border-radius:14px;
+  background:rgba(255,255,255,.5);
+  pointer-events:none;
+  z-index:3;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.shadow{
+  position:fixed;
+  left:0;
+  top:0;
+  height:12px;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(38,34,28,.45),rgba(38,34,28,0) 70%);
+  pointer-events:none;
+  will-change:transform,opacity;
+  display:none;
+}
+.handle{
+  position:fixed;
+  left:0;
+  top:0;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(38,34,28,.35);
+  box-shadow:0 3px 10px rgba(38,34,28,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s;
+  cursor:grab;
+  z-index:6;
+  touch-action:none;
+}
 .handle.on{opacity:1;pointer-events:auto}
 .handle:active{cursor:grabbing}
-.ring{position:fixed;width:150px;height:150px;border:2.5px solid rgba(38,34,28,.55);border-radius:50%;opacity:0;pointer-events:none}
+.ring{
+  position:fixed;
+  width:150px;
+  height:150px;
+  border:2.5px solid rgba(38,34,28,.55);
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+}
 .ring.go{animation:ring .5s ease-out forwards}
-@keyframes ring{from{opacity:.6;transform:scale(.3)}to{opacity:0;transform:scale(1.3)}}
-.menu{position:fixed;display:none;z-index:9;padding:9px 18px;background:#26221C;color:#F4F1EA;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:15px;border-radius:20px;box-shadow:0 6px 18px rgba(38,34,28,.28);cursor:pointer;letter-spacing:1px}
+@keyframes ring{
+  from{opacity:.6;transform:scale(.3)}
+  to{opacity:0;transform:scale(1.3)}
+}
+.menu{
+  position:fixed;
+  display:none;
+  z-index:9;
+  padding:9px 18px;
+  background:#26221C;
+  color:#F4F1EA;
+  font-family:Georgia,'Times New Roman',serif;
+  font-style:italic;
+  font-size:15px;
+  border-radius:20px;
+  box-shadow:0 6px 18px rgba(38,34,28,.28);
+  cursor:pointer;
+  letter-spacing:1px;
+}
 .menu.on{display:block}
-.trash{position:fixed;right:24px;bottom:24px;display:flex;align-items:center;justify-content:center;opacity:.5;pointer-events:auto;transition:opacity .15s ease,transform .15s ease;z-index:3;cursor:pointer}
-.trash.on{opacity:1;transform:scale(1.15)}
+.trash{
+  position:fixed;
+  right:max(20px, env(safe-area-inset-right));
+  bottom:max(20px, env(safe-area-inset-bottom));
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:.5;
+  pointer-events:auto;
+  transition:opacity .15s ease,transform .15s ease;
+  z-index:3;
+  cursor:pointer;
+  touch-action:none;
+}
+.trash.on{opacity:1;transform:scale(1.18)}
 .trash svg{pointer-events:none}
+
+/* 手机端窄屏尺寸适配 */
+@media (max-width: 640px) {
+  .panel {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+    grid-template-columns: repeat(4, 36px);
+    grid-template-rows: repeat(4, 36px);
+    gap: 4px;
+    padding: 6px;
+    border-radius: 10px;
+  }
+  .panel .char {
+    font-size: 22px !important;
+    border-radius: 6px;
+  }
+  .char {
+    font-size: 38px;
+  }
+}
 </style>
 </head>
 <body>
@@ -38,7 +205,7 @@ body{background:#F4F1EA;font-family:Georgia,'Times New Roman',serif;font-style:i
 <div class="shadow" id="shadow"></div>
 <div class="panel" id="panel"></div>
 <div class="handle" id="handle">
-  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#26221C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#26221C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="22 4 22 10 16 10"></polyline>
     <path d="M19.5 15a8.5 8.5 0 1 1-2-8.9L22 10"></path>
   </svg>
@@ -55,2564 +222,2612 @@ body{background:#F4F1EA;font-family:Georgia,'Times New Roman',serif;font-style:i
 <div class="ring" id="ring"></div>
 
 <script>
-var ctx2d=document.createElement('canvas').getContext('2d');
-var F=48,GRAV=2600,AACC=1300,RM=150,MT={},RAISE=F*0.3;
-var B_FIELD_RANGE=320,BZ_DIR=1,Q_OMEGA=2.4,A_FORCE=900,Q_FORCE=2.2;
-var E_FIELD_RANGE=320,E_FIELD_ACC=1500;
-var cv=document.getElementById('cv');
-var panel=document.getElementById('panel');
-var shadow=document.getElementById('shadow');
-var handle=document.getElementById('handle');
-var ring=document.getElementById('ring');
-var menu=document.getElementById('menu');
-var trash=document.getElementById('trash');
-var pointer={x:-9999,y:-9999};
-var W=0,H=0,groundY=0,t=0,menuBody=null;
-var dragBody=null,dragLetter=null,rotBody=null,rotGrab=0,hoverBody=null,handleBody=null;
-var axisBody=null,axisLast=null;
-var bodies=[],freeG=[],parts=[],ALL=[],slots={},samples=[];
-var OPEN='(',CLOSE=')',PLUS='+',SQ='²',BAR='-',HALF='½',MU='μ',SUB1='₁',SUB2='₂',PRIME='′';
-var SHATTER_SPEED=1100;
-function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-function shortAng(d){d=d%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;}
-function met(ch,size){
-  size=size||F;
-  var key=ch+'@'+size;
-  if(MT[key])return MT[key];
-  ctx2d.font='italic '+size+'px Georgia,"Times New Roman",serif';
-  var q=ctx2d.measureText(ch);
-  var fba=q.fontBoundingBoxAscent||q.actualBoundingBoxAscent||60;
-  var fbd=q.fontBoundingBoxDescent||q.actualBoundingBoxDescent||20;
-  var ia=q.actualBoundingBoxAscent||0;
-  var id=q.actualBoundingBoxDescent||0;
-  var bl=(size-(fba+fbd))/2+fba;
-  MT[key]={top:bl-ia-size/2,bot:bl+id-size/2,w:q.width};
+// 禁用 Safari / 移动端默认双指缩放与手势手滑
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive: false });
+document.addEventListener('touchmove', function(e){ if (e.cancelable) e.preventDefault(); }, { passive: false });
+
+var ctx2d = document.createElement('canvas').getContext('2d');
+var F = Math.min(48, Math.max(36, Math.round(window.innerWidth / 9)));
+var GRAV=2600, AACC=1300, RM=150, MT={}, RAISE=F*0.3;
+var B_FIELD_RANGE=300, BZ_DIR=1, Q_OMEGA=2.4, A_FORCE=900, Q_FORCE=2.2;
+var E_FIELD_RANGE=300, E_FIELD_ACC=1500;
+var cv = document.getElementById('cv');
+var panel = document.getElementById('panel');
+var shadow = document.getElementById('shadow');
+var handle = document.getElementById('handle');
+var ring = document.getElementById('ring');
+var menu = document.getElementById('menu');
+var trash = document.getElementById('trash');
+var pointer = { x: -9999, y: -9999 };
+var W = 0, H = 0, groundY = 0, t = 0, menuBody = null;
+var dragBody = null, dragLetter = null, rotBody = null, rotGrab = 0, hoverBody = null, handleBody = null;
+var axisBody = null, axisLast = null;
+var bodies = [], freeG = [], parts = [], ALL = [], slots = {}, samples = [];
+var OPEN = '(', CLOSE = ')', PLUS = '+', SQ = '²', BAR = '-', HALF = '½', MU = 'μ', SUB1 = '₁', SUB2 = '₂', PRIME = '′';
+var SHATTER_SPEED = 1100;
+
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+function shortAng(d){ d = d % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; }
+
+function met(ch, size){
+  size = size || F;
+  var key = ch + '@' + size;
+  if(MT[key]) return MT[key];
+  ctx2d.font = 'italic ' + size + 'px Georgia,"Times New Roman",serif';
+  var q = ctx2d.measureText(ch);
+  var fba = q.fontBoundingBoxAscent || q.actualBoundingBoxAscent || 60;
+  var fbd = q.fontBoundingBoxDescent || q.actualBoundingBoxDescent || 20;
+  var ia = q.actualBoundingBoxAscent || 0;
+  var id = q.actualBoundingBoxDescent || 0;
+  var bl = (size - (fba + fbd)) / 2 + fba;
+  MT[key] = { top: bl - ia - size / 2, bot: bl + id - size / 2, w: q.width };
   return MT[key];
 }
-function isLet(d){return d.type==='g'||d.type==='a'||d.type==='v'||d.type==='r';}
-function isMass(d){var t=(typeof d==='string')?d:d.type;return t==='m'||t==='M';}
-function GD(ch,sc){
-  sc=sc||1;
-  var sz=F*sc;
-  var el=document.createElement('div');
-  el.className='char';
-  el.style.fontSize=sz+'px';
-  el.textContent=ch;
+
+function isLet(d){ return d.type === 'g' || d.type === 'a' || d.type === 'v' || d.type === 'r'; }
+function isMass(d){ var t = (typeof d === 'string') ? d : d.type; return t === 'm' || t === 'M'; }
+
+function GD(ch, sc){
+  sc = sc || 1;
+  var sz = F * sc;
+  var el = document.createElement('div');
+  el.className = 'char';
+  el.style.fontSize = sz + 'px';
+  el.textContent = ch;
   document.body.appendChild(el);
-  var d={el:el,ch:ch,type:ch,clone:false,body:null,sx:0,sy:0,w:el.offsetWidth,h:el.offsetHeight,wx:0,wy:0,vx:0,vy:0,anim:0,rung:false,pop:0,r:0,dead:false,m:met(ch,sz)};
+  var d = { el: el, ch: ch, type: ch, clone: false, body: null, sx: 0, sy: 0, w: el.offsetWidth, h: el.offsetHeight, wx: 0, wy: 0, vx: 0, vy: 0, anim: 0, rung: false, pop: 0, r: 0, dead: false, m: met(ch, sz) };
   ALL.push(d);
-  el._letterRef=d;
-  el.addEventListener('pointerdown',function(e){gdDown(e,d);});
-  el.addEventListener('contextmenu',function(e){e.preventDefault();var mb=d.body;if(mb&&mb.glyphs.indexOf(d)>=0)openMenu(e.clientX,e.clientY,mb);});
+  el._letterRef = d;
+  el.addEventListener('pointerdown', function(e){ gdDown(e, d); });
+  el.addEventListener('contextmenu', function(e){
+    e.preventDefault();
+    var mb = d.body;
+    if(mb && mb.glyphs.indexOf(d) >= 0) openMenu(e.clientX, e.clientY, mb);
+  });
   return d;
 }
-var mO=GD('m');
-var gO=GD('g');
-var aO=GD('a');
-var vO=GD('v');
-var rO=GD('r');
-var M2O=GD('M');
-var halfO=GD(HALF);
-var muO=GD(MU);
-var cO=GD('c');
-var GO=GD('G');
-var tO=GD('t');
-var BO=GD('B');
-var qO=GD('q');
-var IO=GD('I');
-var EO=GD('E');
-gO.el.style.zIndex='5';
-aO.el.style.zIndex='5';
-vO.el.style.zIndex='5';
-rO.el.style.zIndex='5';
-M2O.el.style.zIndex='5';
-halfO.el.style.zIndex='5';
-muO.el.style.zIndex='5';
-cO.el.style.zIndex='5';
-GO.el.style.zIndex='5';
-tO.el.style.zIndex='5';
-BO.el.style.zIndex='5';
-qO.el.style.zIndex='5';
-IO.el.style.zIndex='5';
-EO.el.style.zIndex='5';
-freeG.push(gO,aO,vO,rO,M2O,halfO,muO,cO,GO,tO,BO,qO,IO,EO);
 
-function BODY(x,y){
-  var B={x:x,y:y,vx:0,vy:0,th:0,sc:1,glyphs:[],mem:[],massG:null,mass:1,hasG:false,hasA:false,hasV:false,hasR:false,family:0,hw:40,hh:26,dv:0,drag:false,diss:false,orbit:null,pendingOrbit:false,
-    kind:null,fg:null,fieldR:0,Bz:1,qsign:1,Isign:1,fieldState:null,L:48,
-    bh:null,
-    st:{open:null,close:null,plus:null,sq:null,slash:null}};
+var mO = GD('m');
+var gO = GD('g');
+var aO = GD('a');
+var vO = GD('v');
+var rO = GD('r');
+var M2O = GD('M');
+var halfO = GD(HALF);
+var muO = GD(MU);
+var cO = GD('c');
+var GO = GD('G');
+var tO = GD('t');
+var BO = GD('B');
+var qO = GD('q');
+var IO = GD('I');
+var EO = GD('E');
+
+[gO, aO, vO, rO, M2O, halfO, muO, cO, GO, tO, BO, qO, IO, EO].forEach(function(o){
+  o.el.style.zIndex = '5';
+  freeG.push(o);
+});
+
+function BODY(x, y){
+  var B = {
+    x: x, y: y, vx: 0, vy: 0, th: 0, sc: 1, glyphs: [], mem: [], massG: null, mass: 1,
+    hasG: false, hasA: false, hasV: false, hasR: false, family: 0, hw: 40, hh: 26, dv: 0,
+    drag: false, diss: false, orbit: null, pendingOrbit: false, kind: null, fg: null,
+    fieldR: 0, Bz: 1, qsign: 1, Isign: 1, fieldState: null, L: 48, bh: null,
+    st: { open: null, close: null, plus: null, sq: null, slash: null }
+  };
   bodies.push(B);
   return B;
 }
-function spawnField(kind,x,y,svx,svy){
-  var B=BODY(x,y);
-  B.kind=kind;
-  var g=GD(kind);
-  g.pop=0;g.body=B;g.inBody=true;
-  B.fg=g;
-  B.glyphs=[g];
-  var sp=Math.hypot(svx||0,svy||0);
-  var f=sp>20?clamp(1-sp/6000,0.5,1):0;
-  if(kind==='B'){B.fieldR=B_FIELD_RANGE;B.Bz=BZ_DIR;B.vx=0;B.vy=0;}
-  else if(kind==='E'){B.fieldR=E_FIELD_RANGE;B.th=0;B.vx=0;B.vy=0;}
-  else if(kind==='q'){B.qsign=1;B.vx=(svx||0)*f;B.vy=(svy||0)*f;}
-  else if(kind==='I'){B.Isign=1;B.vx=(svx||0)*f;B.vy=(svy||0)*f;}
+
+function spawnField(kind, x, y, svx, svy){
+  var B = BODY(x, y);
+  B.kind = kind;
+  var g = GD(kind);
+  g.pop = 0; g.body = B; g.inBody = true;
+  B.fg = g;
+  B.glyphs = [g];
+  var sp = Math.hypot(svx || 0, svy || 0);
+  var f = sp > 20 ? clamp(1 - sp / 6000, 0.5, 1) : 0;
+  if(kind === 'B'){ B.fieldR = B_FIELD_RANGE; B.Bz = BZ_DIR; B.vx = 0; B.vy = 0; }
+  else if(kind === 'E'){ B.fieldR = E_FIELD_RANGE; B.th = 0; B.vx = 0; B.vy = 0; }
+  else if(kind === 'q'){ B.qsign = 1; B.vx = (svx || 0) * f; B.vy = (svy || 0) * f; }
+  else if(kind === 'I'){ B.Isign = 1; B.vx = (svx || 0) * f; B.vy = (svy || 0) * f; }
   refresh(B);
-  ringGo(B.x,B.y);
+  ringGo(B.x, B.y);
   return B;
 }
-function makeRod(x,y,vx,vy){
-  var B=BODY(x,y);
-  B.kind='T';
-  B.fg=null;
-  B.hasG=true;
-  B.len=170;B.php=F*0.55;
+
+function makeRod(x, y, vx, vy){
+  var B = BODY(x, y);
+  B.kind = 'T';
+  B.fg = null;
+  B.hasG = true;
+  B.len = 160; B.php = F * 0.55;
   refresh(B);
-  B.vx=vx||0;B.vy=vy||0;
+  B.vx = vx || 0; B.vy = vy || 0;
   return B;
 }
+
 function tAnchor(B){
-  if(B.kind)return {x:B.x,y:B.y};
-  return B.massG?slot(B,B.massG):{x:B.x,y:B.y};
+  if(B.kind) return { x: B.x, y: B.y };
+  return B.massG ? slot(B, B.massG) : { x: B.x, y: B.y };
 }
+
 function findTComboTarget(L){
-  if(!L||L.type!=='t')return null;
-  var best=null,bd=150;
-  for(var fvi=0;fvi<freeL.length;fvi++){
-    var FV=freeL[fvi];
-    if(FV.type!=='v'||FV===L||FV.dead)continue;
-    var df=Math.hypot(FV.wx-L.wx,FV.wy-L.wy);
-    if(df<bd){bd=df;best={fv:FV,kind:'vt'};}
+  if(!L || L.type !== 't') return null;
+  var best = null, bd = 150;
+  for(var fvi = 0; fvi < freeL.length; fvi++){
+    var FV = freeL[fvi];
+    if(FV.type !== 'v' || FV === L || FV.dead) continue;
+    var df = Math.hypot(FV.wx - L.wx, FV.wy - L.wy);
+    if(df < bd){ bd = df; best = { fv: FV, kind: 'vt' }; }
   }
   if(!best){
-    for(var i=0;i<bodies.length;i++){
-      var B=bodies[i];
-      if(B.massG===L||B.mem.indexOf(L)>=0)continue;
-      var a=tAnchor(B);
-      var d=Math.hypot(a.x-L.wx,a.y-L.wy);
-      if(d>bd)continue;
-      var ok=false,kind='';
-      if(B.kind==='q'){ok=true;kind='qt';}
-      else if(B.kind&&B.kind!=='T'){continue;}
-      else if(B.hasG&&B.mem.length<=2&&!B.hasGrav){ok=true;kind='gt';}
-      else if((B.kind==='T')||(B.hasV&&!B.hasG&&!B.hasR&&!B.hasGrav&&B.mem.length<=1)){ok=true;kind='vt';}
-      if(ok&&d<bd){bd=d;best={B:B,kind:kind};}
+    for(var i = 0; i < bodies.length; i++){
+      var B = bodies[i];
+      if(B.massG === L || B.mem.indexOf(L) >= 0) continue;
+      var a = tAnchor(B);
+      var d = Math.hypot(a.x - L.wx, a.y - L.wy);
+      if(d > bd) continue;
+      var ok = false, kind = '';
+      if(B.kind === 'q'){ ok = true; kind = 'qt'; }
+      else if(B.kind && B.kind !== 'T'){ continue; }
+      else if(B.hasG && B.mem.length <= 2 && !B.hasGrav){ ok = true; kind = 'gt'; }
+      else if((B.kind === 'T') || (B.hasV && !B.hasG && !B.hasR && !B.hasGrav && B.mem.length <= 1)){ ok = true; kind = 'vt'; }
+      if(ok && d < bd){ bd = d; best = { B: B, kind: kind }; }
     }
   }
   return best;
 }
-function applyTCombo(L,c){
-  var B=c.B;
-  if(c.kind==='vt'&&c.fv){
-    var rod=makeRod(L.wx,L.wy,0,0);
+
+function applyTCombo(L, c){
+  var B = c.B;
+  if(c.kind === 'vt' && c.fv){
+    var rod = makeRod(L.wx, L.wy, 0, 0);
     killLetter(c.fv);
     killLetter(L);
-    ringGo(rod.x,rod.y);
+    ringGo(rod.x, rod.y);
     return;
   }
-  if(c.kind==='qt'){
-    if(B.fg){B.fg.body=null;B.fg.inBody=false;killLetter(B.fg);B.fg=null;}
-    B.kind='I';B.Isign=1;
-    var ng=GD('I');ng.pop=0;ng.body=B;ng.inBody=true;B.fg=ng;
+  if(c.kind === 'qt'){
+    if(B.fg){ B.fg.body = null; B.fg.inBody = false; killLetter(B.fg); B.fg = null; }
+    B.kind = 'I'; B.Isign = 1;
+    var ng = GD('I'); ng.pop = 0; ng.body = B; ng.inBody = true; B.fg = ng;
     killLetter(L);
-    refresh(B);ringGo(B.x,B.y);
-  }else if(c.kind==='gt'){
-    for(var qi=B.mem.length-1;qi>=0;qi--){
-      if(B.mem[qi].type==='g'){var gi2=B.mem[qi];B.mem.splice(qi,1);killLetter(gi2);}
+    refresh(B); ringGo(B.x, B.y);
+  } else if(c.kind === 'gt'){
+    for(var qi = B.mem.length - 1; qi >= 0; qi--){
+      if(B.mem[qi].type === 'g'){ var gi2 = B.mem[qi]; B.mem.splice(qi, 1); killLetter(gi2); }
     }
     killLetter(L);
-    var vg=GD('v');vg.pop=0;vg.body=B;vg.inBody=true;B.mem.push(vg);
-    refresh(B);ringGo(B.x,B.y);
-  }else if(c.kind==='vt'){
-    for(var jj=B.glyphs.length-1;jj>=0;jj--){
-      var og=B.glyphs[jj];
-      if(og.body===B){og.body=null;og.inBody=false;killLetter(og);}
+    var vg = GD('v'); vg.pop = 0; vg.body = B; vg.inBody = true; B.mem.push(vg);
+    refresh(B); ringGo(B.x, B.y);
+  } else if(c.kind === 'vt'){
+    for(var jj = B.glyphs.length - 1; jj >= 0; jj--){
+      var og = B.glyphs[jj];
+      if(og.body === B){ og.body = null; og.inBody = false; killLetter(og); }
     }
-    for(var mmi=B.mem.length-1;mmi>=0;mmi--){var mo2=B.mem[mmi];B.mem.splice(mmi,1);killLetter(mo2);}
+    for(var mmi = B.mem.length - 1; mmi >= 0; mmi--){ var mo2 = B.mem[mmi]; B.mem.splice(mmi, 1); killLetter(mo2); }
     killLetter(L);
-    B.massG=null;
-    B.hasG=true;B.hasV=false;B.kind='T';B.fg=null;
-    B.len=170;B.php=F*0.55;
-    refresh(B);ringGo(B.x,B.y);
+    B.massG = null;
+    B.hasG = true; B.hasV = false; B.kind = 'T'; B.fg = null;
+    B.len = 160; B.php = F * 0.55;
+    refresh(B); ringGo(B.x, B.y);
   }
 }
+
 function layoutField(B){
-  if(B.kind==='T'){
-    B.fg=null;
-    B.hw=B.len/2+2;B.hh=4;
-    B.sc=1;B.frac=false;B.subBar=null;
+  if(B.kind === 'T'){
+    B.fg = null;
+    B.hw = B.len / 2 + 2; B.hh = 4;
+    B.sc = 1; B.frac = false; B.subBar = null;
     return;
   }
-  B.glyphs=[B.fg];
-  B.fg.body=B;B.fg.inBody=true;B.fg.sx=0;B.fg.sy=0;
-  B.hw=(B.fg.m.w/2)+8;B.hh=(B.fg.m.bot-B.fg.m.top)/2+4;B.sc=1;B.frac=false;B.subBar=null;
+  B.glyphs = [B.fg];
+  B.fg.body = B; B.fg.inBody = true; B.fg.sx = 0; B.fg.sy = 0;
+  B.hw = (B.fg.m.w / 2) + 8; B.hh = (B.fg.m.bot - B.fg.m.top) / 2 + 4; B.sc = 1; B.frac = false; B.subBar = null;
 }
+
 function setF(B){
-  B.hasG=false;B.hasA=false;B.hasV=false;B.hasR=false;B.hasHalf=false;B.hasMu=false;B.hasC=false;B.hasGrav=false;
-  for(var i=0;i<B.mem.length;i++){
-    var tt=B.mem[i].type;
-    if(tt==='g')B.hasG=true;
-    else if(tt==='a')B.hasA=true;
-    else if(tt==='v')B.hasV=true;
-    else if(tt==='r')B.hasR=true;
-    else if(tt===HALF)B.hasHalf=true;
-    else if(tt===MU)B.hasMu=true;
-    else if(tt==='c')B.hasC=true;
-    else if(tt==='G')B.hasGrav=true;
+  B.hasG = false; B.hasA = false; B.hasV = false; B.hasR = false; B.hasHalf = false; B.hasMu = false; B.hasC = false; B.hasGrav = false;
+  for(var i = 0; i < B.mem.length; i++){
+    var tt = B.mem[i].type;
+    if(tt === 'g') B.hasG = true;
+    else if(tt === 'a') B.hasA = true;
+    else if(tt === 'v') B.hasV = true;
+    else if(tt === 'r') B.hasR = true;
+    else if(tt === HALF) B.hasHalf = true;
+    else if(tt === MU) B.hasMu = true;
+    else if(tt === 'c') B.hasC = true;
+    else if(tt === 'G') B.hasGrav = true;
   }
-  B.family=(B.hasG||B.hasA||B.hasMu||B.hasC||B.hasGrav)?1:((B.hasV||B.hasR||B.hasHalf)?2:0);
-  B.vCount=0;
-  for(var k=0;k<B.mem.length;k++)if(B.mem[k].type==='v')B.vCount++;
-  B.cCount=0;
-  for(var k2=0;k2<B.mem.length;k2++)if(B.mem[k2].type==='c')B.cCount++;
-  B.rCount=0;
-  for(var rk=0;rk<B.mem.length;rk++)if(B.mem[rk].type==='r')B.rCount++;
-  B.gravMode=gravModeOf(B);
-  B.isSchwarzschild=!!(B.gravMode==='schwarz'&&B.cCount>=2);
-  B.isWell=!!(B.gravMode==='well');
-  if(B.massG)B.mass=(B.massG.type==='M')?3:1;
+  B.family = (B.hasG || B.hasA || B.hasMu || B.hasC || B.hasGrav) ? 1 : ((B.hasV || B.hasR || B.hasHalf) ? 2 : 0);
+  B.vCount = 0;
+  for(var k = 0; k < B.mem.length; k++) if(B.mem[k].type === 'v') B.vCount++;
+  B.cCount = 0;
+  for(var k2 = 0; k2 < B.mem.length; k2++) if(B.mem[k2].type === 'c') B.cCount++;
+  B.rCount = 0;
+  for(var rk = 0; rk < B.mem.length; rk++) if(B.mem[rk].type === 'r') B.rCount++;
+  B.gravMode = gravModeOf(B);
+  B.isSchwarzschild = !!(B.gravMode === 'schwarz' && B.cCount >= 2);
+  B.isWell = !!(B.gravMode === 'well');
+  if(B.massG) B.mass = (B.massG.type === 'M') ? 3 : 1;
 }
+
 function gravModeOf(B){
-  if(!B.hasGrav)return 'plain';
-  var Mtot=(B.massG&&B.massG.type==='M')?1:0,mtot=(B.massG&&B.massG.type==='m')?1:0;
-  var rc=0,cc2=0;
-  for(var i=0;i<B.mem.length;i++){
-    var t=B.mem[i].type;
-    if(t==='M')Mtot++;
-    else if(t==='m')mtot++;
-    else if(t==='r')rc++;
-    else if(t==='c')cc2++;
+  if(!B.hasGrav) return 'plain';
+  var Mtot = (B.massG && B.massG.type === 'M') ? 1 : 0, mtot = (B.massG && B.massG.type === 'm') ? 1 : 0;
+  var rc = 0, cc2 = 0;
+  for(var i = 0; i < B.mem.length; i++){
+    var t = B.mem[i].type;
+    if(t === 'M') Mtot++;
+    else if(t === 'm') mtot++;
+    else if(t === 'r') rc++;
+    else if(t === 'c') cc2++;
   }
-  if(Mtot>=1&&cc2>=1&&rc<2)return 'schwarz';
-  if(Mtot>=1&&mtot>=1&&rc>=2)return 'well';
+  if(Mtot >= 1 && cc2 >= 1 && rc < 2) return 'schwarz';
+  if(Mtot >= 1 && mtot >= 1 && rc >= 2) return 'well';
   return 'plain';
 }
-function wLet(x){if(x==='g')return 0;if(x==='a')return 1;if(x==='v')return 2;return 3;}
+
+function wLet(x){ if(x === 'g') return 0; if(x === 'a') return 1; if(x === 'v') return 2; return 3; }
+
 function ensureSt(B){
-  var p1=(B.family===1&&B.mem.length>=2&&B.cCount<2&&!(B.hasGrav||B.hasR));
-  var keeps=[];
-  function live(k,ch,sc){
-    if(!B.st[k]||B.st[k].dead){if(B.st[k])killG(B.st[k]);B.st[k]=stGD(ch,sc);}
-    var g=B.st[k];
-    if(B.glyphs.indexOf(g)<0)B.glyphs.push(g);
-    g.body=B;g.s=1;keeps.push(g);
+  var p1 = (B.family === 1 && B.mem.length >= 2 && B.cCount < 2 && !(B.hasGrav || B.hasR));
+  var keeps = [];
+  function live(k, ch, sc){
+    if(!B.st[k] || B.st[k].dead){ if(B.st[k]) killG(B.st[k]); B.st[k] = stGD(ch, sc); }
+    var g = B.st[k];
+    if(B.glyphs.indexOf(g) < 0) B.glyphs.push(g);
+    g.body = B; g.s = 1; keeps.push(g);
   }
   function dead(k){
-    if(B.st[k]){killG(B.st[k]);B.st[k]=null;}
+    if(B.st[k]){ killG(B.st[k]); B.st[k] = null; }
   }
-  if(p1){live('open',OPEN);live('plus',PLUS);live('close',CLOSE);}
-  else{dead('open');dead('plus');dead('close');}
-  var gMode=gravModeOf(B);
-  var pSq=(B.family===2&&B.vCount>=2)||(B.family===1&&B.cCount>=2&&!B.hasGrav)||(B.hasGrav&&B.rCount>=2)||(gMode==='schwarz'&&B.cCount>=2);
-  if(pSq){live('sq',SQ,0.6);}
-  else{dead('sq');}
-  var pFrac=(gMode==='schwarz')||(B.family===2&&(B.hasR||B.hasHalf)&&B.vCount>=2)||(B.hasGrav&&B.hasR);
-  if(pFrac){live('bar',BAR);}
-  else{dead('bar');}
-  if(B.hasHalf||B.isSchwarzschild){live('h2','2');}
-  else{dead('h1');dead('h2');}
-  for(var i=B.glyphs.length-1;i>=0;i--){
-    var g=B.glyphs[i];
-    if(g.stk&&keeps.indexOf(g)<0){B.glyphs.splice(i,1);killG(g);}
+  if(p1){ live('open', OPEN); live('plus', PLUS); live('close', CLOSE); }
+  else { dead('open'); dead('plus'); dead('close'); }
+  var gMode = gravModeOf(B);
+  var pSq = (B.family === 2 && B.vCount >= 2) || (B.family === 1 && B.cCount >= 2 && !B.hasGrav) || (B.hasGrav && B.rCount >= 2) || (gMode === 'schwarz' && B.cCount >= 2);
+  if(pSq){ live('sq', SQ, 0.6); } else { dead('sq'); }
+  var pFrac = (gMode === 'schwarz') || (B.family === 2 && (B.hasR || B.hasHalf) && B.vCount >= 2) || (B.hasGrav && B.hasR);
+  if(pFrac){ live('bar', BAR); } else { dead('bar'); }
+  if(B.hasHalf || B.isSchwarzschild){ live('h2', '2'); } else { dead('h1'); dead('h2'); }
+  for(var i = B.glyphs.length - 1; i >= 0; i--){
+    var g = B.glyphs[i];
+    if(g.stk && keeps.indexOf(g) < 0){ B.glyphs.splice(i, 1); killG(g); }
   }
 }
+
 function killG(g){
-  if(!g||g.dead)return;
-  g.dead=true;
-  if(g.el&&g.el.parentNode)g.el.parentNode.removeChild(g.el);
-  if(g.body){var k=g.body.glyphs.indexOf(g);if(k>=0)g.body.glyphs.splice(k,1);}
-  g.body=null;
+  if(!g || g.dead) return;
+  g.dead = true;
+  if(g.el && g.el.parentNode) g.el.parentNode.removeChild(g.el);
+  if(g.body){ var k = g.body.glyphs.indexOf(g); if(k >= 0) g.body.glyphs.splice(k, 1); }
+  g.body = null;
 }
-function stGD(ch,sc){
-  var d=GD(ch,sc||1);
-  d.stk=true;
-  d.s=1;
+
+function stGD(ch, sc){
+  var d = GD(ch, sc || 1);
+  d.stk = true; d.s = 1;
   return d;
 }
+
 function tokenSeq(B){
-  var out=[B.massG];
-  if(B.family===0){
-    for(var mi0=0;mi0<B.mem.length;mi0++)if(isMass(B.mem[mi0]))out.push(B.mem[mi0]);
-  }else if(B.family===1){
-    if(B.mem.length===1)out.push(B.mem[0]);
-    else if(B.cCount>=2){
-      var c1=null;
-      for(var ci=0;ci<B.mem.length;ci++){if(B.mem[ci].type==='c'){c1=B.mem[ci];break;}}
-      if(c1)out.push(c1);
-      if(B.st.sq)out.push(B.st.sq);
-    }
-    else{
+  var out = [B.massG];
+  if(B.family === 0){
+    for(var mi0 = 0; mi0 < B.mem.length; mi0++) if(isMass(B.mem[mi0])) out.push(B.mem[mi0]);
+  } else if(B.family === 1){
+    if(B.mem.length === 1) out.push(B.mem[0]);
+    else if(B.cCount >= 2){
+      var c1 = null;
+      for(var ci = 0; ci < B.mem.length; ci++){ if(B.mem[ci].type === 'c'){ c1 = B.mem[ci]; break; } }
+      if(c1) out.push(c1);
+      if(B.st.sq) out.push(B.st.sq);
+    } else {
       out.push(B.st.open);
-      for(var i=0;i<B.mem.length;i++){
-        if(i)out.push(B.st.plus);
+      for(var i = 0; i < B.mem.length; i++){
+        if(i) out.push(B.st.plus);
         out.push(B.mem[i]);
       }
       out.push(B.st.close);
     }
-  }else if(B.family===2){
-    var vSeen=false;
-    for(var j=0;j<B.mem.length;j++){
-      var tt=B.mem[j].type;
-      if(tt==='r')continue;
-      if(tt==='v'){
-        if(vSeen)continue;
-        vSeen=true;
-      }
+  } else if(B.family === 2){
+    var vSeen = false;
+    for(var j = 0; j < B.mem.length; j++){
+      var tt = B.mem[j].type;
+      if(tt === 'r') continue;
+      if(tt === 'v'){ if(vSeen) continue; vSeen = true; }
       out.push(B.mem[j]);
     }
-    if(B.vCount>=2)out.push(B.st.sq);
+    if(B.vCount >= 2) out.push(B.st.sq);
   }
-  var fin=[];
-  for(var k=0;k<out.length;k++)if(out[k])fin.push(out[k]);
+  var fin = [];
+  for(var k = 0; k < out.length; k++) if(out[k]) fin.push(out[k]);
   return fin;
 }
-function kern(a,b){
-  if(a===SQ||b===SQ)return 2;
-  if(a===OPEN||b===CLOSE)return 4;
+
+function kern(a, b){
+  if(a === SQ || b === SQ) return 2;
+  if(a === OPEN || b === CLOSE) return 4;
   return 5;
 }
+
 function hRun(items){
-  var x=0,parts=[];
-  for(var i=0;i<items.length;i++){
-    var it=items[i];
-    var w=it.g.m.w*it.s;
-    var gap=(i<items.length-1)?kern(it.g.type, items[i+1].g.type):0;
-    parts.push({g:it.g,s:it.s,dy:it.dy,cx:x+w/2,w:w});
-    x+=w+gap;
+  var x = 0, parts = [];
+  for(var i = 0; i < items.length; i++){
+    var it = items[i];
+    var w = it.g.m.w * it.s;
+    var gap = (i < items.length - 1) ? kern(it.g.type, items[i + 1].g.type) : 0;
+    parts.push({ g: it.g, s: it.s, dy: it.dy, cx: x + w / 2, w: w });
+    x += w + gap;
   }
-  return {parts:parts,w:x};
+  return { parts: parts, w: x };
 }
+
 function placeRun(parts, runW, centerY){
-  var top=1e9,bot=-1e9;
-  for(var i=0;i<parts.length;i++){var p=parts[i];top=Math.min(top,p.dy+p.g.m.top*p.s);bot=Math.max(bot,p.dy+p.g.m.bot*p.s);}
-  var dv=(top+bot)/2;
-  for(var j=0;j<parts.length;j++){var q=parts[j];q.g.sx=q.cx-runW/2;q.g.sy=(q.dy-dv)+centerY;}
+  var top = 1e9, bot = -1e9;
+  for(var i = 0; i < parts.length; i++){ var p = parts[i]; top = Math.min(top, p.dy + p.g.m.top * p.s); bot = Math.max(bot, p.dy + p.g.m.bot * p.s); }
+  var dv = (top + bot) / 2;
+  for(var j = 0; j < parts.length; j++){ var q = parts[j]; q.g.sx = q.cx - runW / 2; q.g.sy = (q.dy - dv) + centerY; }
 }
+
 function layoutRun(B, items){
-  var run=hRun(items);
+  var run = hRun(items);
   placeRun(run.parts, run.w, 0);
-  B.frac=false;
-  var top=1e9,bot=-1e9;
-  for(var i=0;i<run.parts.length;i++){var p=run.parts[i];top=Math.min(top,p.dy+p.g.m.top*p.s);bot=Math.max(bot,p.dy+p.g.m.bot*p.s);}
-  B.hw=run.w/2+5;B.hh=(bot-top)/2+1;B.sc=1;B.subBar=null;
+  B.frac = false;
+  var top = 1e9, bot = -1e9;
+  for(var i = 0; i < run.parts.length; i++){ var p = run.parts[i]; top = Math.min(top, p.dy + p.g.m.top * p.s); bot = Math.max(bot, p.dy + p.g.m.bot * p.s); }
+  B.hw = run.w / 2 + 5; B.hh = (bot - top) / 2 + 1; B.sc = 1; B.subBar = null;
 }
+
 function layoutBracket(B){
-  var toks=tokenSeq(B);
-  var items=[];for(var i=0;i<toks.length;i++)items.push({g:toks[i],s:1,dy:0});
-  layoutRun(B,items);
+  var toks = tokenSeq(B);
+  var items = []; for(var i = 0; i < toks.length; i++) items.push({ g: toks[i], s: 1, dy: 0 });
+  layoutRun(B, items);
 }
+
 function layoutFrac(B, vG, rG){
-  var num=[{g:B.massG,s:1,dy:0}];
-  if(vG)num.push({g:vG,s:1,dy:0});
-  if(B.vCount>=2&&B.st.sq)num.push({g:B.st.sq,s:1,dy:0});
-  var numR=hRun(num);
-  var nTop=1e9,nBot=-1e9;
-  numR.parts.forEach(function(p){nTop=Math.min(nTop,p.dy+p.g.m.top*p.s);nBot=Math.max(nBot,p.dy+p.g.m.bot*p.s);});
-  var rows=[];
-  if(B.hasR&&rG){var rr=hRun([{g:rG,s:1,dy:0}]);rows.push(rr);}
-  if(B.hasHalf){var rr2=hRun([{g:B.st.h2,s:1,dy:0}]);rows.push(rr2);}
-  rows.forEach(function(r){r.top=1e9;r.bot=-1e9;r.parts.forEach(function(p){r.top=Math.min(r.top,p.dy+p.g.m.top*p.s);r.bot=Math.max(r.bot,p.dy+p.g.m.bot*p.s);});});
-  var dGap=7, subGap=3;
-  var denTop=nBot+dGap;
-  var dTop,dBot,subBarY=null;
-  if(rows.length===1){
-    var r0=rows[0];var sh=denTop-r0.top;
-    r0.parts.forEach(function(p){p.g.sy=sh+p.dy;});
-    dTop=r0.top+sh;dBot=r0.bot+sh;
-  }else{
-    var A=rows[0],Bb=rows[1];
-    var ah=A.bot-A.top;
-    subBarY=denTop+ah+subGap/2;
-    var shA=subBarY-subGap/2-A.bot;
-    A.parts.forEach(function(p){p.g.sy=shA+p.dy;});
-    var shB=subBarY+subGap/2-Bb.top;
-    Bb.parts.forEach(function(p){p.g.sy=shB+p.dy;});
-    dTop=A.top+shA;dBot=Bb.bot+shB;
+  var num = [{ g: B.massG, s: 1, dy: 0 }];
+  if(vG) num.push({ g: vG, s: 1, dy: 0 });
+  if(B.vCount >= 2 && B.st.sq) num.push({ g: B.st.sq, s: 1, dy: 0 });
+  var numR = hRun(num);
+  var nTop = 1e9, nBot = -1e9;
+  numR.parts.forEach(function(p){ nTop = Math.min(nTop, p.dy + p.g.m.top * p.s); nBot = Math.max(nBot, p.dy + p.g.m.bot * p.s); });
+  var rows = [];
+  if(B.hasR && rG){ var rr = hRun([{ g: rG, s: 1, dy: 0 }]); rows.push(rr); }
+  if(B.hasHalf){ var rr2 = hRun([{ g: B.st.h2, s: 1, dy: 0 }]); rows.push(rr2); }
+  rows.forEach(function(r){ r.top = 1e9; r.bot = -1e9; r.parts.forEach(function(p){ r.top = Math.min(r.top, p.dy + p.g.m.top * p.s); r.bot = Math.max(r.bot, p.dy + p.g.m.bot * p.s); }); });
+  var dGap = 7, subGap = 3;
+  var denTop = nBot + dGap;
+  var dTop, dBot, subBarY = null;
+  if(rows.length === 1){
+    var r0 = rows[0]; var sh = denTop - r0.top;
+    r0.parts.forEach(function(p){ p.g.sy = sh + p.dy; });
+    dTop = r0.top + sh; dBot = r0.bot + sh;
+  } else {
+    var A = rows[0], Bb = rows[1];
+    var ah = A.bot - A.top;
+    subBarY = denTop + ah + subGap / 2;
+    var shA = subBarY - subGap / 2 - A.bot;
+    A.parts.forEach(function(p){ p.g.sy = shA + p.dy; });
+    var shB = subBarY + subGap / 2 - Bb.top;
+    Bb.parts.forEach(function(p){ p.g.sy = shB + p.dy; });
+    dTop = A.top + shA; dBot = Bb.bot + shB;
   }
-  var numShift=-dGap-nBot;
-  numR.parts.forEach(function(p){p.g.sx=p.cx-numR.w/2;p.g.sy=numShift+p.dy;});
-  rows.forEach(function(r){r.parts.forEach(function(p){p.g.sx=p.cx-r.w/2;});});
-  var denW=0;rows.forEach(function(r){denW=Math.max(denW,r.w);});
-  var fracW=Math.max(numR.w,denW)+14;
-  B.st.bar.w=fracW;B.st.bar.h=2;B.st.bar.sx=0;B.st.bar.sy=0;
-  var wholeTop=nTop+numShift, wholeBot=dBot;
-  var shiftY=-(wholeTop+wholeBot)/2;
-  numR.parts.forEach(function(p){p.g.sy+=shiftY;});
-  rows.forEach(function(r){r.parts.forEach(function(p){p.g.sy+=shiftY;});});
-  B.st.bar.sy=shiftY;
-  if(subBarY!=null){B.subBar={y:subBarY+shiftY,w:Math.max(rows[0].w,rows[1].w)+6};}else{B.subBar=null;}
-  B.hw=fracW/2+4;B.hh=(wholeBot-wholeTop)/2+2;
-  var maxDim=Math.max(fracW,(wholeBot-wholeTop));
-  B.sc=clamp(155/maxDim,0.5,1);
-  B.frac=true;
+  var numShift = -dGap - nBot;
+  numR.parts.forEach(function(p){ p.g.sx = p.cx - numR.w / 2; p.g.sy = numShift + p.dy; });
+  rows.forEach(function(r){ r.parts.forEach(function(p){ p.g.sx = p.cx - r.w / 2; }); });
+  var denW = 0; rows.forEach(function(r){ denW = Math.max(denW, r.w); });
+  var fracW = Math.max(numR.w, denW) + 14;
+  B.st.bar.w = fracW; B.st.bar.h = 2; B.st.bar.sx = 0; B.st.bar.sy = 0;
+  var wholeTop = nTop + numShift, wholeBot = dBot;
+  var shiftY = -(wholeTop + wholeBot) / 2;
+  numR.parts.forEach(function(p){ p.g.sy += shiftY; });
+  rows.forEach(function(r){ r.parts.forEach(function(p){ p.g.sy += shiftY; }); });
+  B.st.bar.sy = shiftY;
+  if(subBarY != null){ B.subBar = { y: subBarY + shiftY, w: Math.max(rows[0].w, rows[1].w) + 6 }; } else { B.subBar = null; }
+  B.hw = fracW / 2 + 4; B.hh = (wholeBot - wholeTop) / 2 + 2;
+  var maxDim = Math.max(fracW, (wholeBot - wholeTop));
+  B.sc = clamp(140 / maxDim, 0.5, 1);
+  B.frac = true;
 }
+
 function gravParts(B){
-  var Gg=null,bigM=null,smallM=null;
-  for(var i=0;i<B.mem.length;i++){
-    var t=B.mem[i].type;
-    if(t==='G'){if(!Gg)Gg=B.mem[i];}
-    else if(t==='M'){if(!bigM)bigM=B.mem[i];}
-    else if(t==='m'){if(!smallM)smallM=B.mem[i];}
+  var Gg = null, bigM = null, smallM = null;
+  for(var i = 0; i < B.mem.length; i++){
+    var t = B.mem[i].type;
+    if(t === 'G'){ if(!Gg) Gg = B.mem[i]; }
+    else if(t === 'M'){ if(!bigM) bigM = B.mem[i]; }
+    else if(t === 'm'){ if(!smallM) smallM = B.mem[i]; }
   }
   if(B.massG){
-    if(B.massG.type==='M'){if(!bigM)bigM=B.massG;}
-    else if(B.massG.type==='m'){if(!smallM)smallM=B.massG;}
+    if(B.massG.type === 'M'){ if(!bigM) bigM = B.massG; }
+    else if(B.massG.type === 'm'){ if(!smallM) smallM = B.massG; }
   }
-  return {Gg:Gg,bigM:bigM,smallM:smallM};
+  return { Gg: Gg, bigM: bigM, smallM: smallM };
 }
+
 function layoutGrav(B){
-  var p=gravParts(B),Gg=p.Gg,bigM=p.bigM,smallM=p.smallM,rG=null;
-  for(var i=0;i<B.mem.length;i++){if(B.mem[i].type==='r')rG=B.mem[i];}
-  var cG=null;
-  for(var ci=0;ci<B.mem.length;ci++){if(B.mem[ci].type==='c'){cG=B.mem[ci];break;}}
-  var mode=gravModeOf(B);
+  var p = gravParts(B), Gg = p.Gg, bigM = p.bigM, smallM = p.smallM, rG = null;
+  for(var i = 0; i < B.mem.length; i++){ if(B.mem[i].type === 'r') rG = B.mem[i]; }
+  var cG = null;
+  for(var ci = 0; ci < B.mem.length; ci++){ if(B.mem[ci].type === 'c'){ cG = B.mem[ci]; break; } }
+  var mode = gravModeOf(B);
   function gravItems(){
-    var a=[];
-    if(B.isSchwarzschild&&B.st.h2)a.push({g:B.st.h2,s:1,dy:0});
-    if(Gg)a.push({g:Gg,s:1,dy:0});
-    if(bigM)a.push({g:bigM,s:1,dy:0});
-    if(smallM&&mode!=='schwarz')a.push({g:smallM,s:1,dy:0});
+    var a = [];
+    if(B.isSchwarzschild && B.st.h2) a.push({ g: B.st.h2, s: 1, dy: 0 });
+    if(Gg) a.push({ g: Gg, s: 1, dy: 0 });
+    if(bigM) a.push({ g: bigM, s: 1, dy: 0 });
+    if(smallM && mode !== 'schwarz') a.push({ g: smallM, s: 1, dy: 0 });
     return a;
   }
-  var denMain=(B.hasR&&rG)?rG:((mode==='schwarz'&&cG)?cG:null);
-  var gravBase=!!denMain;
+  var denMain = (B.hasR && rG) ? rG : ((mode === 'schwarz' && cG) ? cG : null);
+  var gravBase = !!denMain;
   if(gravBase){
-    var num=gravItems();
-    var numR=hRun(num);
-    var nTop=1e9,nBot=-1e9;
-    numR.parts.forEach(function(p){nTop=Math.min(nTop,p.dy+p.g.m.top*p.s);nBot=Math.max(nBot,p.dy+p.g.m.bot*p.s);});
-    var den=[{g:denMain,s:1,dy:0}];
-    if(B.st.sq&&(B.isSchwarzschild||B.rCount>=2)){
-      var sqM=B.st.sq.m||{bot:8,top:-12};
-      var dySup=(denMain.m.top-sqM.bot)-4;
-      den.push({g:B.st.sq,s:1,dy:dySup});
+    var num = gravItems();
+    var numR = hRun(num);
+    var nTop = 1e9, nBot = -1e9;
+    numR.parts.forEach(function(p){ nTop = Math.min(nTop, p.dy + p.g.m.top * p.s); nBot = Math.max(nBot, p.dy + p.g.m.bot * p.s); });
+    var den = [{ g: denMain, s: 1, dy: 0 }];
+    if(B.st.sq && (B.isSchwarzschild || B.rCount >= 2)){
+      var sqM = B.st.sq.m || { bot: 8, top: -12 };
+      var dySup = (denMain.m.top - sqM.bot) - 4;
+      den.push({ g: B.st.sq, s: 1, dy: dySup });
     }
-    var dR=hRun(den);
-    var dTop=1e9,dBot=-1e9;
-    dR.parts.forEach(function(p){dTop=Math.min(dTop,p.dy+p.g.m.top*p.s);dBot=Math.max(dBot,p.dy+p.g.m.bot*p.s);});
-    var dGap=7;
-    var denTop=nBot+dGap;
-    var shR=denTop-denMain.m.top;
-    dR.parts.forEach(function(p){p.g.sx=p.cx-dR.w/2;p.g.sy=shR+p.dy;});
-    var numShift=-dGap-nBot;
-    numR.parts.forEach(function(p){p.g.sx=p.cx-numR.w/2;p.g.sy=numShift+p.dy;});
-    var denW=dR.w;
-    var fracW=Math.max(numR.w,denW)+14;
-    B.st.bar.w=fracW;B.st.bar.h=2;B.st.bar.sx=0;B.st.bar.sy=0;
-    var wholeTop=nTop+numShift, wholeBot=dBot;
-    var shiftY=-(wholeTop+wholeBot)/2;
-    numR.parts.forEach(function(p){p.g.sy+=shiftY;});
-    dR.parts.forEach(function(p){p.g.sy+=shiftY;});
-    B.st.bar.sy=shiftY;
-    B.subBar=null;
-    B.hw=fracW/2+4;B.hh=(wholeBot-wholeTop)/2+2;
-    var maxDim=Math.max(fracW,(wholeBot-wholeTop));
-    B.sc=clamp(155/maxDim,0.5,1);
-    B.frac=true;
-  }else{
-    var items=gravItems();
-    for(var xi=0;xi<B.mem.length;xi++){
-      var xg=B.mem[xi];
-      if(xg.type==='r')continue;
-      var dup=false;
-      for(var yj=0;yj<items.length;yj++)if(items[yj].g===xg){dup=true;break;}
-      if(!dup)items.push({g:xg,s:1,dy:0});
+    var dR = hRun(den);
+    var dTop = 1e9, dBot = -1e9;
+    dR.parts.forEach(function(p){ dTop = Math.min(dTop, p.dy + p.g.m.top * p.s); dBot = Math.max(dBot, p.dy + p.g.m.bot * p.s); });
+    var dGap = 7;
+    var denTop = nBot + dGap;
+    var shR = denTop - denMain.m.top;
+    dR.parts.forEach(function(p){ p.g.sx = p.cx - dR.w / 2; p.g.sy = shR + p.dy; });
+    var numShift = -dGap - nBot;
+    numR.parts.forEach(function(p){ p.g.sx = p.cx - numR.w / 2; p.g.sy = numShift + p.dy; });
+    var denW = dR.w;
+    var fracW = Math.max(numR.w, denW) + 14;
+    B.st.bar.w = fracW; B.st.bar.h = 2; B.st.bar.sx = 0; B.st.bar.sy = 0;
+    var wholeTop = nTop + numShift, wholeBot = dBot;
+    var shiftY = -(wholeTop + wholeBot) / 2;
+    numR.parts.forEach(function(p){ p.g.sy += shiftY; });
+    dR.parts.forEach(function(p){ p.g.sy += shiftY; });
+    B.st.bar.sy = shiftY;
+    B.subBar = null;
+    B.hw = fracW / 2 + 4; B.hh = (wholeBot - wholeTop) / 2 + 2;
+    var maxDim = Math.max(fracW, (wholeBot - wholeTop));
+    B.sc = clamp(140 / maxDim, 0.5, 1);
+    B.frac = true;
+  } else {
+    var items = gravItems();
+    for(var xi = 0; xi < B.mem.length; xi++){
+      var xg = B.mem[xi];
+      if(xg.type === 'r') continue;
+      var dup = false;
+      for(var yj = 0; yj < items.length; yj++) if(items[yj].g === xg){ dup = true; break; }
+      if(!dup) items.push({ g: xg, s: 1, dy: 0 });
     }
-    var R=hRun(items);
-    var top=1e9,bot=-1e9;
-    R.parts.forEach(function(p){top=Math.min(top,p.dy+p.g.m.top);bot=Math.max(bot,p.dy+p.g.m.bot);});
-    var dv=(top+bot)/2;
-    R.parts.forEach(function(p){p.g.sx=p.cx-R.w/2;p.g.sy=(p.dy-dv);});
-    B.frac=false;B.subBar=null;
-    B.hw=R.w/2+5;B.hh=(bot-top)/2+1;
-    B.sc=clamp(155/Math.max(R.w,(bot-top)),0.5,1);
-    B._plainGlyphs=[];
-    for(var gi2=0;gi2<items.length;gi2++)B._plainGlyphs.push(items[gi2].g);
+    var R = hRun(items);
+    var top = 1e9, bot = -1e9;
+    R.parts.forEach(function(p){ top = Math.min(top, p.dy + p.g.m.top); bot = Math.max(bot, p.dy + p.g.m.bot); });
+    var dv = (top + bot) / 2;
+    R.parts.forEach(function(p){ p.g.sx = p.cx - R.w / 2; p.g.sy = (p.dy - dv); });
+    B.frac = false; B.subBar = null;
+    B.hw = R.w / 2 + 5; B.hh = (bot - top) / 2 + 1;
+    B.sc = clamp(140 / Math.max(R.w, (bot - top)), 0.5, 1);
+    B._plainGlyphs = [];
+    for(var gi2 = 0; gi2 < items.length; gi2++) B._plainGlyphs.push(items[gi2].g);
   }
 }
+
 function layoutBody(B){
-  B.mem.sort(function(x,y){return wLet(x.type)-wLet(y.type);});
+  B.mem.sort(function(x, y){ return wLet(x.type) - wLet(y.type); });
   ensureSt(B);
-  if(B.hasGrav){layoutGrav(B);return;}
-  var isFrac=B.family===2&&(B.hasR||B.hasHalf)&&B.vCount>=2;
-  var vG=null,rG=null;
-  for(var i=0;i<B.mem.length;i++){if(B.mem[i].type==='v'&&!vG)vG=B.mem[i];if(B.mem[i].type==='r'&&!rG)rG=B.mem[i];}
-  if(B.family===1){
-    if(B.cCount>=2){
-      var cg=null;
-      for(var ci2=0;ci2<B.mem.length;ci2++){if(B.mem[ci2].type==='c'){cg=B.mem[ci2];break;}}
-      var num=[{g:B.massG,s:1,dy:0}];
-      if(cg)num.push({g:cg,s:1,dy:0});
-      if(B.st.sq)num.push({g:B.st.sq,s:1,dy:0});
-      layoutRun(B,num);
+  if(B.hasGrav){ layoutGrav(B); return; }
+  var isFrac = B.family === 2 && (B.hasR || B.hasHalf) && B.vCount >= 2;
+  var vG = null, rG = null;
+  for(var i = 0; i < B.mem.length; i++){ if(B.mem[i].type === 'v' && !vG) vG = B.mem[i]; if(B.mem[i].type === 'r' && !rG) rG = B.mem[i]; }
+  if(B.family === 1){
+    if(B.cCount >= 2){
+      var cg = null;
+      for(var ci2 = 0; ci2 < B.mem.length; ci2++){ if(B.mem[ci2].type === 'c'){ cg = B.mem[ci2]; break; } }
+      var num = [{ g: B.massG, s: 1, dy: 0 }];
+      if(cg) num.push({ g: cg, s: 1, dy: 0 });
+      if(B.st.sq) num.push({ g: B.st.sq, s: 1, dy: 0 });
+      layoutRun(B, num);
       return;
     }
-    layoutBracket(B);return;
+    layoutBracket(B); return;
   }
-  if(isFrac){layoutFrac(B,vG,rG);return;}
-  var num=[{g:B.massG,s:1,dy:0}];
-  if(vG)num.push({g:vG,s:1,dy:0});
-  if(B.vCount>=2&&B.st.sq)num.push({g:B.st.sq,s:1,dy:0});
-  if(B.family===0){
-    for(var mq=0;mq<B.mem.length;mq++)if(isMass(B.mem[mq]))num.push({g:B.mem[mq],s:1,dy:0});
+  if(isFrac){ layoutFrac(B, vG, rG); return; }
+  var num2 = [{ g: B.massG, s: 1, dy: 0 }];
+  if(vG) num2.push({ g: vG, s: 1, dy: 0 });
+  if(B.vCount >= 2 && B.st.sq) num2.push({ g: B.st.sq, s: 1, dy: 0 });
+  if(B.family === 0){
+    for(var mq = 0; mq < B.mem.length; mq++) if(isMass(B.mem[mq])) num2.push({ g: B.mem[mq], s: 1, dy: 0 });
   }
-  layoutRun(B,num);
+  layoutRun(B, num2);
 }
-function slot(B,g){
-  var sc=B.sc||1;
-  var co=Math.cos(B.th),si=Math.sin(B.th);
-  return {x:B.x+(g.sx*co-g.sy*si)*sc,y:B.y+(g.sx*si+g.sy*co)*sc};
+
+function slot(B, g){
+  var sc = B.sc || 1;
+  var co = Math.cos(B.th), si = Math.sin(B.th);
+  return { x: B.x + (g.sx * co - g.sy * si) * sc, y: B.y + (g.sx * si + g.sy * co) * sc };
 }
-function initWorld(B){
-  for(var i=0;i<B.glyphs.length;i++){
-    var s=slot(B,B.glyphs[i]);
-    B.glyphs[i].wx=s.x;
-    B.glyphs[i].wy=s.y;
-  }
-}
-var DD=document,dpr=window.devicePixelRatio||1,cvx=cv.getContext('2d');
-var freeL=[],orbHover=null,orbDrag=null,orbLast=null,cur=null;
-var formulas=[];
-var dockSep=null,merging=false;
-function col(x){return Math.max(0,Math.min(255,x|0));}
-function rgba(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
-var INK=[38,34,28];
-function met2(ch){return met(ch);}
-function glyphH(g){return Math.max(g.el.offsetHeight||F,g.m.bot-g.m.top);}
+
+var DD = document, dpr = window.devicePixelRatio || 1, cvx = cv.getContext('2d');
+var freeL = [], formulas = [];
+
 function refresh(B){
-  if(B.kind){layoutField(B);return;}
-  if(B.bh&&(B.bh.stage===1||B.bh.t>0.6)){
-    B.bh.fade=(B.bh.stage===1)?null:0;
+  if(B.kind){ layoutField(B); return; }
+  if(B.bh && (B.bh.stage === 1 || B.bh.t > 0.6)){
+    B.bh.fade = (B.bh.stage === 1) ? null : 0;
     return;
   }
   setF(B);
   layoutBody(B);
   if(B.frac){
     if(B.hasGrav){
-      B.glyphs=[];
-      var gp=gravParts(B),Gg=gp.Gg,bigM=gp.bigM,smallM=gp.smallM,rGg=null,cGg=null;
-      for(var q=0;q<B.mem.length;q++){
-        var tq=B.mem[q].type;
-        if(tq==='r')rGg=B.mem[q];
-        else if(tq==='c'&&!cGg)cGg=B.mem[q];
+      B.glyphs = [];
+      var gp = gravParts(B), Gg = gp.Gg, bigM = gp.bigM, smallM = gp.smallM, rGg = null, cGg = null;
+      for(var q = 0; q < B.mem.length; q++){
+        var tq = B.mem[q].type;
+        if(tq === 'r') rGg = B.mem[q];
+        else if(tq === 'c' && !cGg) cGg = B.mem[q];
       }
-      if(gravModeOf(B)==='schwarz'){
-        if(B.isSchwarzschild&&B.st.h2)B.glyphs.push(B.st.h2);
-        if(Gg)B.glyphs.push(Gg);
-        if(bigM)B.glyphs.push(bigM);
-        if(B.st.bar)B.glyphs.push(B.st.bar);
-        if(cGg)B.glyphs.push(cGg);
-        if(B.st.sq)B.glyphs.push(B.st.sq);
-      }else{
-        if(Gg)B.glyphs.push(Gg);
-        if(bigM)B.glyphs.push(bigM);
-        if(smallM)B.glyphs.push(smallM);
-        if(rGg)B.glyphs.push(rGg);
-        if(B.st.sq&&B.rCount>=2)B.glyphs.push(B.st.sq);
-        if(B.st.bar)B.glyphs.push(B.st.bar);
+      if(gravModeOf(B) === 'schwarz'){
+        if(B.isSchwarzschild && B.st.h2) B.glyphs.push(B.st.h2);
+        if(Gg) B.glyphs.push(Gg);
+        if(bigM) B.glyphs.push(bigM);
+        if(B.st.bar) B.glyphs.push(B.st.bar);
+        if(cGg) B.glyphs.push(cGg);
+        if(B.st.sq) B.glyphs.push(B.st.sq);
+      } else {
+        if(Gg) B.glyphs.push(Gg);
+        if(bigM) B.glyphs.push(bigM);
+        if(smallM) B.glyphs.push(smallM);
+        if(rGg) B.glyphs.push(rGg);
+        if(B.st.sq && B.rCount >= 2) B.glyphs.push(B.st.sq);
+        if(B.st.bar) B.glyphs.push(B.st.bar);
       }
-    }else{
-      B.glyphs=[B.massG];
-      var vG=null,rG=null;
-      for(var q2=0;q2<B.mem.length;q2++){if(B.mem[q2].type==='v'&&!vG)vG=B.mem[q2];if(B.mem[q2].type==='r'&&!rG)rG=B.mem[q2];}
-      if(vG)B.glyphs.push(vG);
-      if(B.st.sq)B.glyphs.push(B.st.sq);
-      if(rG)B.glyphs.push(rG);
-      if(B.hasHalf){if(B.st.h2)B.glyphs.push(B.st.h2);}
-      if(B.st.bar)B.glyphs.push(B.st.bar);
+    } else {
+      B.glyphs = [B.massG];
+      var vG = null, rG = null;
+      for(var q2 = 0; q2 < B.mem.length; q2++){ if(B.mem[q2].type === 'v' && !vG) vG = B.mem[q2]; if(B.mem[q2].type === 'r' && !rG) rG = B.mem[q2]; }
+      if(vG) B.glyphs.push(vG);
+      if(B.st.sq) B.glyphs.push(B.st.sq);
+      if(rG) B.glyphs.push(rG);
+      if(B.hasHalf){ if(B.st.h2) B.glyphs.push(B.st.h2); }
+      if(B.st.bar) B.glyphs.push(B.st.bar);
     }
-  }else if(B.hasGrav&&B._plainGlyphs){
-    B.glyphs=B._plainGlyphs;
-  }else{
-    B.glyphs=tokList(B);
+  } else if(B.hasGrav && B._plainGlyphs){
+    B.glyphs = B._plainGlyphs;
+  } else {
+    B.glyphs = tokList(B);
   }
-  for(var i=0;i<B.glyphs.length;i++){B.glyphs[i].body=B;B.glyphs[i].inBody=true;}
-  for(var m=0;m<B.mem.length;m++){
-    if(B.glyphs.indexOf(B.mem[m])<0)B.mem[m].el.style.display='none';
+  for(var i = 0; i < B.glyphs.length; i++){ B.glyphs[i].body = B; B.glyphs[i].inBody = true; }
+  for(var m = 0; m < B.mem.length; m++){
+    if(B.glyphs.indexOf(B.mem[m]) < 0) B.mem[m].el.style.display = 'none';
   }
-  if(B.massG&&B.glyphs.indexOf(B.massG)<0)B.massG.el.style.display='none';
-  if(B.orb&&!(B.hasV&&B.hasR&&B.vCount>=2))B.orb=null;
-  if(!B.orb&&(B.hasV&&B.hasR&&B.vCount>=2)){B.orb={spin:0,age:0,pulse:0,ringPts:null,R:120,k:0,e:0,gx:B.x,gy:B.y,gs:1,ga:1};}
-  if(B.family===1&&B.cCount>=2&&!B.hasGrav&&!B.isSchwarzschild&&!B.exploding&&!B.copied){B.exploding=true;B.explT=0;B.infl=1;}
-  if(B.cCount<2||B.isSchwarzschild){B.exploding=false;B.infl=1;B.wob=0;}
-  if(B.isSchwarzschild&&!B.bh){
-    B.bh={stage:0,r:0,R:210,t:0,age:0,spin:0,seed:Math.random()*1000,dead:false};
-    ringGo(B.x,B.y);
+  if(B.massG && B.glyphs.indexOf(B.massG) < 0) B.massG.el.style.display = 'none';
+  if(B.orb && !(B.hasV && B.hasR && B.vCount >= 2)) B.orb = null;
+  if(!B.orb && (B.hasV && B.hasR && B.vCount >= 2)){ B.orb = { spin: 0, age: 0, pulse: 0, ringPts: null, R: 100, k: 0, e: 0, gx: B.x, gy: B.y, gs: 1, ga: 1 }; }
+  if(B.family === 1 && B.cCount >= 2 && !B.hasGrav && !B.isSchwarzschild && !B.exploding && !B.copied){ B.exploding = true; B.explT = 0; B.infl = 1; }
+  if(B.cCount < 2 || B.isSchwarzschild){ B.exploding = false; B.infl = 1; B.wob = 0; }
+  if(B.isSchwarzschild && !B.bh){
+    B.bh = { stage: 0, r: 0, R: 180, t: 0, age: 0, spin: 0, seed: Math.random() * 1000, dead: false };
+    ringGo(B.x, B.y);
   }
-  if(!B.isSchwarzschild&&B.bh&&B.bh.stage===0)B.bh=null;
+  if(!B.isSchwarzschild && B.bh && B.bh.stage === 0) B.bh = null;
 }
+
 function tokList(B){
-  var t=tokenSeq(B);
-  for(var i=0;i<t.length;i++){if(t[i]&&!t[i].body)t[i].body=B;}
+  var t = tokenSeq(B);
+  for(var i = 0; i < t.length; i++){ if(t[i] && !t[i].body) t[i].body = B; }
   return t;
 }
-function place(g,x,y,rot,sc,show){
-  var e=g.el;
-  if(!show){e.style.display='none';return;}
-  e.style.display='';
-  e.style.left=(x-g.w/2)+'px';
-  e.style.top=(y-g.h/2)+'px';
-  var t='rotate('+(rot||0)+'rad) scale('+(sc==null?1:sc)+')';
-  if(e.style.transform!==t)e.style.transform=t;
+
+function place(g, x, y, rot, sc, show){
+  var e = g.el;
+  if(!show){ e.style.display = 'none'; return; }
+  e.style.display = '';
+  e.style.left = (x - g.w / 2) + 'px';
+  e.style.top = (y - g.h / 2) + 'px';
+  var t = 'rotate(' + (rot || 0) + 'rad) scale(' + (sc == null ? 1 : sc) + ')';
+  if(e.style.transform !== t) e.style.transform = t;
 }
+
 function placeLetter(d){
-  if(d.state==='dock'){
-    if(d.el.parentNode!==panel)panel.appendChild(d.el);
-    d.el.style.display='';
-    d.el.style.fontSize='34px';
-    d.el.style.left='';d.el.style.top='';d.el.style.transform='';
+  if(d.state === 'dock'){
+    if(d.el.parentNode !== panel) panel.appendChild(d.el);
+    d.el.style.display = '';
+    d.el.style.left = ''; d.el.style.top = ''; d.el.style.transform = '';
     return;
   }
-  if(d.el.parentNode!==DD.body)DD.body.appendChild(d.el);
-  d.el.style.fontSize=F+'px';
-  if(d.inBody&&d.body){
-    var s=slot(d.body,d);
-    place(d,s.x,s.y,d.body.th||0,1,true);
-  }else if(d.state==='free'||d.state==='grab'){
-    place(d,d.wx||0,d.wy||0,0,1,true);
+  if(d.el.parentNode !== DD.body) DD.body.appendChild(d.el);
+  d.el.style.fontSize = F + 'px';
+  if(d.inBody && d.body){
+    var s = slot(d.body, d);
+    place(d, s.x, s.y, d.body.th || 0, 1, true);
+  } else if(d.state === 'free' || d.state === 'grab'){
+    place(d, d.wx || 0, d.wy || 0, 0, 1, true);
   }
-  d.el.style.opacity=(d.fade!=null)?d.fade:'';
+  d.el.style.opacity = (d.fade != null) ? d.fade : '';
 }
-function dockedTwins(ch,me){
-  var els=panel.querySelectorAll('.char');
-  for(var i=0;i<els.length;i++){
-    var e=els[i];
-    if(e===me)continue;
-    if(e.textContent===ch){
-      var r=e._letterRef;
-      if(r&&r.state==='dock')return true;
+
+function dockedTwins(ch, me){
+  var els = panel.querySelectorAll('.char');
+  for(var i = 0; i < els.length; i++){
+    var e = els[i];
+    if(e === me) continue;
+    if(e.textContent === ch){
+      var r = e._letterRef;
+      if(r && r.state === 'dock') return true;
     }
   }
   return false;
 }
+
 function dockLetter(d){
-  if(dockedTwins(d.ch,d.el)){
-    d.body=null;d.inBody=false;
+  if(dockedTwins(d.ch, d.el)){
+    d.body = null; d.inBody = false;
     killLetter(d);
     return;
   }
-  d.state='dock';d.body=null;d.inBody=false;
-  var e=d.el;
-  if(e.parentNode!==panel)panel.appendChild(e);
-  e.style.display='';
-  e.style.fontSize='34px';
-  e.style.left='';e.style.top='';e.style.transform='';
-  e.style.opacity='';
+  d.state = 'dock'; d.body = null; d.inBody = false;
+  var e = d.el;
+  if(e.parentNode !== panel) panel.appendChild(e);
+  e.style.display = '';
+  e.style.left = ''; e.style.top = ''; e.style.transform = '';
+  e.style.opacity = '';
   e.classList.remove('dockin');
   e.classList.add('dockin');
-  setTimeout(function(){if(d.state==='dock')e.classList.remove('dockin');},240);
+  setTimeout(function(){ if(d.state === 'dock') e.classList.remove('dockin'); }, 240);
   sortPanel();
 }
-var DOCK_ORDER={'m':0,'M':1,'g':2,'a':3,'v':4,'r':5,'½':6,'μ':7,'c':8,'G':9,'t':10,'B':11,'E':12,'q':13,'I':14};
+
+var DOCK_ORDER = { 'm': 0, 'M': 1, 'g': 2, 'a': 3, 'v': 4, 'r': 5, '½': 6, 'μ': 7, 'c': 8, 'G': 9, 't': 10, 'B': 11, 'E': 12, 'q': 13, 'I': 14 };
+
 function dockSlotEl(e){
-  var i=DOCK_ORDER[e.textContent];
-  if(i==null)return;
-  e.style.gridRowStart=(Math.floor(i/4)+1);
-  e.style.gridColumnStart=(i%4+1);
+  var i = DOCK_ORDER[e.textContent];
+  if(i == null) return;
+  e.style.gridRowStart = (Math.floor(i / 4) + 1);
+  e.style.gridColumnStart = (i % 4 + 1);
 }
+
 function sortPanel(){
-  var kids=[mO,M2O,gO,aO,vO,rO,halfO,muO,cO,GO,tO,BO,EO,qO,IO];
-  for(var i=0;i<kids.length;i++){
-    var d=kids[i];
-    if(d.state==='dock'&&d.el.parentNode!==panel)panel.appendChild(d.el);
+  var kids = [mO, M2O, gO, aO, vO, rO, halfO, muO, cO, GO, tO, BO, EO, qO, IO];
+  for(var i = 0; i < kids.length; i++){
+    var d = kids[i];
+    if(d.state === 'dock' && d.el.parentNode !== panel) panel.appendChild(d.el);
   }
-  var arr=[].slice.call(panel.querySelectorAll('.char'));
-  arr.sort(function(x,y){return DOCK_ORDER[x.textContent]-DOCK_ORDER[y.textContent];});
-  arr.forEach(function(e){panel.appendChild(e);});
-  for(var k2=0;k2<arr.length;k2++)dockSlotEl(arr[k2]);
+  var arr = [].slice.call(panel.querySelectorAll('.char'));
+  arr.sort(function(x, y){ return DOCK_ORDER[x.textContent] - DOCK_ORDER[y.textContent]; });
+  arr.forEach(function(e){ panel.appendChild(e); });
+  for(var k2 = 0; k2 < arr.length; k2++) dockSlotEl(arr[k2]);
 }
-function freeLetter(d,x,y,vx,vy,cat){
-  d.body=null;d.inBody=false;d.state='free';
-  d.wx=x;d.wy=y;d.vx=vx||0;d.vy=vy||0;d.cat=cat;
-  if(freeL.indexOf(d)<0)freeL.push(d);
+
+function freeLetter(d, x, y, vx, vy, cat){
+  d.body = null; d.inBody = false; d.state = 'free';
+  d.wx = x; d.wy = y; d.vx = vx || 0; d.vy = vy || 0; d.cat = cat;
+  if(freeL.indexOf(d) < 0) freeL.push(d);
   d.el.classList.remove('dockin');
   placeLetter(d);
 }
-function pickFromDock(d){
-  d.state='grab';d.body=null;
-  d.wx=pointer.x;d.wy=pointer.y;d.vx=0;d.vy=0;
-  placeLetter(d);
-}
-function attach(B,d){
-  if(B.mem.indexOf(d)>=0)return;
-  var mi=freeL.indexOf(d);if(mi>=0)freeL.splice(mi,1);
-  var pv=null;
-  if(B.massG&&B.massG.sx!=null)pv={sx:B.massG.sx,sy:B.massG.sy};
-  d.state='mem';
+
+function attach(B, d){
+  if(B.mem.indexOf(d) >= 0) return;
+  var mi = freeL.indexOf(d); if(mi >= 0) freeL.splice(mi, 1);
+  var pv = null;
+  if(B.massG && B.massG.sx != null) pv = { sx: B.massG.sx, sy: B.massG.sy };
+  d.state = 'mem';
   B.mem.push(d);
-  d.body=B;d.inBody=true;
-  B.pop=1;
+  d.body = B; d.inBody = true;
+  B.pop = 1;
   refresh(B);
-  var hh=Math.max(20,B.hh||18);
-  if(B.y+hh>groundY){B.y=groundY-hh;B.vy=-Math.abs(B.vy)*0.5;}
-  if(pv)keepMass(B,pv);
-  ringGo(B.x,B.y);
+  var hh = Math.max(20, B.hh || 18);
+  if(B.y + hh > groundY){ B.y = groundY - hh; B.vy = -Math.abs(B.vy) * 0.5; }
+  if(pv) keepMass(B, pv);
+  ringGo(B.x, B.y);
 }
-function keepMass(B,pv){
-  var m=B.massG;if(!m)return;
-  var th=B.th||0,c=Math.cos(th),s=Math.sin(th);
-  var dx=pv.sx-m.sx,dy=pv.sy-m.sy;
-  B.x+=dx*c-dy*s;
-  B.y+=dx*s+dy*c;
+
+function keepMass(B, pv){
+  var m = B.massG; if(!m) return;
+  var th = B.th || 0, c = Math.cos(th), s = Math.sin(th);
+  var dx = pv.sx - m.sx, dy = pv.sy - m.sy;
+  B.x += dx * c - dy * s;
+  B.y += dx * s + dy * c;
 }
-function splitOne(B,d){
-  var i=B.mem.indexOf(d);
-  if(i<0){
-    i=-1;
-    for(var q=B.mem.length-1;q>=0;q--)if(B.mem[q].type==='v')i=q;
-    if(i<0)i=B.mem.length-1;
-    if(i<0)return;
-    d=B.mem[i];
+
+function splitOne(B, d){
+  var i = B.mem.indexOf(d);
+  if(i < 0){
+    i = -1;
+    for(var q = B.mem.length - 1; q >= 0; q--) if(B.mem[q].type === 'v') i = q;
+    if(i < 0) i = B.mem.length - 1;
+    if(i < 0) return;
+    d = B.mem[i];
   }
-  var out=[d];
-  if(d.type==='v'&&B.vCount>=2&&(B.hasR||B.hasHalf)){
-    for(var k=B.mem.length-1;k>=0;k--){
-      var tk=B.mem[k].type;
-      if((tk==='r'||tk===HALF)&&out.indexOf(B.mem[k])<0)out.push(B.mem[k]);
+  var out = [d];
+  if(d.type === 'v' && B.vCount >= 2 && (B.hasR || B.hasHalf)){
+    for(var k = B.mem.length - 1; k >= 0; k--){
+      var tk = B.mem[k].type;
+      if((tk === 'r' || tk === HALF) && out.indexOf(B.mem[k]) < 0) out.push(B.mem[k]);
     }
   }
-  var pv=null;
-  if(B.massG&&B.massG.sx!=null)pv={sx:B.massG.sx,sy:B.massG.sy};
-  var msvx=B.vx,msvy=B.vy;
-  for(var j=0;j<out.length;j++){
-    var g=out[j],mi2=B.mem.indexOf(g);
-    if(mi2>=0)B.mem.splice(mi2,1);
-    g.body=null;g.inBody=false;g.state='free';g.pop=0;
+  var pv = null;
+  if(B.massG && B.massG.sx != null) pv = { sx: B.massG.sx, sy: B.massG.sy };
+  var msvx = B.vx, msvy = B.vy;
+  for(var j = 0; j < out.length; j++){
+    var g = out[j], mi2 = B.mem.indexOf(g);
+    if(mi2 >= 0) B.mem.splice(mi2, 1);
+    g.body = null; g.inBody = false; g.state = 'free'; g.pop = 0;
   }
   refresh(B);
-  if(pv)keepMass(B,pv);
-  var dir=Math.random()*6.2832, dx=Math.cos(dir), dy=Math.sin(dir), sep=75;
-  B.vx=msvx+dx*sep; B.vy=msvy+dy*sep;
-  for(var n=0;n<out.length;n++){
-    var L=out[n], sp=slot(B,L);
-    var fi=freeL.indexOf(L); if(fi>=0)freeL.splice(fi,1);
-    freeLetter(L, sp.x, sp.y, msvx-dx*sep+(Math.random()*24-12), msvy-dy*sep+(Math.random()*24-12), false);
+  if(pv) keepMass(B, pv);
+  var dir = Math.random() * 6.2832, dx = Math.cos(dir), dy = Math.sin(dir), sep = 75;
+  B.vx = msvx + dx * sep; B.vy = msvy + dy * sep;
+  for(var n = 0; n < out.length; n++){
+    var L = out[n], sp = slot(B, L);
+    var fi = freeL.indexOf(L); if(fi >= 0) freeL.splice(fi, 1);
+    freeLetter(L, sp.x, sp.y, msvx - dx * sep + (Math.random() * 24 - 12), msvy - dy * sep + (Math.random() * 24 - 12), false);
   }
 }
-function canMerge(B,d){
-  if(!B||B.kind)return false;
-  if(B.bh)return false;
-  var t=d.type;
-  if(t==='t')return false;
+
+function canMerge(B, d){
+  if(!B || B.kind) return false;
+  if(B.bh) return false;
+  var t = d.type;
+  if(t === 't') return false;
   if(isMass(t)){
-    var hasM=false,hasm=false;
-    if(B.massG){if(B.massG.type==='M')hasM=true;else if(B.massG.type==='m')hasm=true;}
-    for(var mi=0;mi<B.mem.length;mi++){
-      var mt=B.mem[mi].type;
-      if(mt==='M')hasM=true;else if(mt==='m')hasm=true;
+    var hasM = false, hasm = false;
+    if(B.massG){ if(B.massG.type === 'M') hasM = true; else if(B.massG.type === 'm') hasm = true; }
+    for(var mi = 0; mi < B.mem.length; mi++){
+      var mt = B.mem[mi].type;
+      if(mt === 'M') hasM = true; else if(mt === 'm') hasm = true;
     }
-    if(t==='M'&&hasM)return false;
-    if(t==='m'&&hasm)return false;
-    var nM=(hasM?1:0)+(hasm?1:0);
+    if(t === 'M' && hasM) return false;
+    if(t === 'm' && hasm) return false;
+    var nM = (hasM ? 1 : 0) + (hasm ? 1 : 0);
     if(B.hasGrav){
-      if(B.cCount>=1)return false;
-      if(nM>=2)return false;
-      if(B.mem.length>=5)return false;
+      if(B.cCount >= 1) return false;
+      if(nM >= 2) return false;
+      if(B.mem.length >= 5) return false;
       return true;
     }
-    if(nM>=2)return false;
+    if(nM >= 2) return false;
     return true;
   }
-  if(t==='c'){
-    var cc=0;
-    for(var cci=0;cci<B.mem.length;cci++)if(B.mem[cci].type==='c')cc++;
-    if(cc>=2)return false;
-    if(B.hasV||B.hasR||B.hasHalf)return false;
-    if(B.hasGrav)return B.mem.length<4;
-    if(B.mem.length>=2)return false;
+  if(t === 'c'){
+    var cc = 0;
+    for(var cci = 0; cci < B.mem.length; cci++) if(B.mem[cci].type === 'c') cc++;
+    if(cc >= 2) return false;
+    if(B.hasV || B.hasR || B.hasHalf) return false;
+    if(B.hasGrav) return B.mem.length < 4;
+    if(B.mem.length >= 2) return false;
     return true;
   }
-  if(t==='G'){
-    if(B.hasGrav)return false;
-    if(B.family===2)return false;
-    if(B.hasC){if(B.mem.length>=1)return false;return true;}
-    if(B.mem.length>=2)return false;
+  if(t === 'G'){
+    if(B.hasGrav) return false;
+    if(B.family === 2) return false;
+    if(B.hasC){ if(B.mem.length >= 1) return false; return true; }
+    if(B.mem.length >= 2) return false;
     return true;
   }
-  var fam=(t==='g'||t==='a'||t===MU||t==='c'||t==='G')?1:2;
-  if(B.family&&B.family!==fam&&!B.hasGrav)return false;
-  if(t==='r'||t===HALF){
-    if(t==='r'){if(B.hasGrav){if(B.rCount>=2)return false;if(B.mem.length>=5)return false;return true;}for(var i=0;i<B.mem.length;i++)if(B.mem[i].type==='r')return false;}
-    else{for(var i2=0;i2<B.mem.length;i2++)if(B.mem[i2].type===HALF)return false;}
-    if(B.vCount<2)return false;
-    if(B.mem.length>=3)return false;
+  var fam = (t === 'g' || t === 'a' || t === MU || t === 'c' || t === 'G') ? 1 : 2;
+  if(B.family && B.family !== fam && !B.hasGrav) return false;
+  if(t === 'r' || t === HALF){
+    if(t === 'r'){ if(B.hasGrav){ if(B.rCount >= 2) return false; if(B.mem.length >= 5) return false; return true; } for(var i = 0; i < B.mem.length; i++) if(B.mem[i].type === 'r') return false; }
+    else { for(var i2 = 0; i2 < B.mem.length; i2++) if(B.mem[i2].type === HALF) return false; }
+    if(B.vCount < 2) return false;
+    if(B.mem.length >= 3) return false;
     return true;
   }
-  if(t==='v'){
-    if(B.vCount>=2)return false;
-    if(B.mem.length>=3)return false;
+  if(t === 'v'){
+    if(B.vCount >= 2) return false;
+    if(B.mem.length >= 3) return false;
     return true;
   }
-  for(var k=0;k<B.mem.length;k++)if(B.mem[k].type===t)return false;
-  if(B.mem.length>=2)return false;
+  for(var k = 0; k < B.mem.length; k++) if(B.mem[k].type === t) return false;
+  if(B.mem.length >= 2) return false;
   return true;
 }
+
 function findMergeTarget(d){
-  var best=null,bd=1e9;
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(B.massG===d||B.mem.indexOf(d)>=0)continue;
-    if(!canMerge(B,d))continue;
-    var s=B.massG?slot(B,B.massG):{x:B.x,y:B.y};
-    var dist=Math.hypot(s.x-d.wx,s.y-d.wy);
-    if(dist<bd){bd=dist;best=B;}
+  var best = null, bd = 1e9;
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(B.massG === d || B.mem.indexOf(d) >= 0) continue;
+    if(!canMerge(B, d)) continue;
+    var s = B.massG ? slot(B, B.massG) : { x: B.x, y: B.y };
+    var dist = Math.hypot(s.x - d.wx, s.y - d.wy);
+    if(dist < bd){ bd = dist; best = B; }
   }
-  return bd<200?best:null;
+  return bd < 180 ? best : null;
 }
+
 function findFreeMassTarget(d){
-  var best=null,bd=200;
-  for(var i=0;i<freeL.length;i++){
-    var F=freeL[i];
-    if(F===d||F.dead||F.state!=='free')continue;
-    if(!isMass(F))continue;
-    var dist=Math.hypot(F.wx-d.wx,F.wy-d.wy);
-    if(dist<bd){bd=dist;best=F;}
+  var best = null, bd = 180;
+  for(var i = 0; i < freeL.length; i++){
+    var F2 = freeL[i];
+    if(F2 === d || F2.dead || F2.state !== 'free') continue;
+    if(!isMass(F2)) continue;
+    var dist = Math.hypot(F2.wx - d.wx, F2.wy - d.wy);
+    if(dist < bd){ bd = dist; best = F2; }
   }
   return best;
 }
+
 function findFreeLetterTarget(B){
-  var best=null,bd=200;
-  for(var i=0;i<freeL.length;i++){
-    var L=freeL[i];
-    if(!canMerge(B,L))continue;
-    var dx=L.wx-B.x,dy=L.wy-B.y;
-    var d=Math.hypot(dx,dy);
-    if(d<bd){bd=d;best=L;}
+  var best = null, bd = 180;
+  for(var i = 0; i < freeL.length; i++){
+    var L = freeL[i];
+    if(!canMerge(B, L)) continue;
+    var dx = L.wx - B.x, dy = L.wy - B.y;
+    var d = Math.hypot(dx, dy);
+    if(d < bd){ bd = d; best = L; }
   }
   return best;
 }
-function openMenu(x,y,B){
-  if(!B)return;
-  menuBody=B;
-  menu.style.left=clamp(x,0,W-90)+'px';
-  menu.style.top=clamp(y,0,H-40)+'px';
+
+function openMenu(x, y, B){
+  if(!B) return;
+  menuBody = B;
+  menu.style.left = clamp(x, 0, W - 90) + 'px';
+  menu.style.top = clamp(y, 0, H - 40) + 'px';
   menu.classList.add('on');
 }
-function closeMenu(){menu.classList.remove('on');}
-function ringGo(x,y){
-  var e=ring;
-  e.style.left=(x-75)+'px';e.style.top=(y-75)+'px';
-  e.classList.remove('go');void e.offsetWidth;e.classList.add('go');
+function closeMenu(){ menu.classList.remove('on'); }
+
+function ringGo(x, y){
+  var e = ring;
+  e.style.left = (x - 75) + 'px'; e.style.top = (y - 75) + 'px';
+  e.classList.remove('go'); void e.offsetWidth; e.classList.add('go');
 }
-menu.addEventListener('click',function(e){
+
+menu.addEventListener('pointerdown', function(e){
   e.stopPropagation();
-  if(menuBody)copyBody(menuBody);
+  if(menuBody) copyBody(menuBody);
   closeMenu();
 });
-DD.addEventListener('pointerdown',function(e){if(!e.target.closest('#menu'))closeMenu();});
-var grab={kind:null,obj:null,gx:0,gy:0,lx:0,ly:0,t:0,svx:0,svy:0,start:0};
-var dblState={t:0,x:0,y:0,body:null};
-var hoverB=null;
-function easeOutBack(k){k-=1;return 1+k*k*((2.2)*k+1+2.2);}
-function gdDown(e,d){
-  if(e.button!==0)return;
-  if(d.state==='dock'){
-    var rp=d.el.getBoundingClientRect();
-    var cx=rp.left+rp.width/2,cy=rp.top+rp.height/2;
-    var t2=GD(d.ch);
-    t2.cat=1;t2.pop=0;
-    t2.state='grab';
-    t2.body=null;
-    t2.wx=cx;t2.wy=cy;
-    t2.w=F*0.7;t2.h=F;
-    grab={kind:'letter',obj:t2,gx:pointer.x-cx,gy:pointer.y-cy,lx:pointer.x,ly:pointer.y,t:performance.now(),start:pointer.x};
+DD.addEventListener('pointerdown', function(e){ if(!e.target.closest('#menu')) closeMenu(); });
+
+var grab = { kind: null, obj: null, gx: 0, gy: 0, lx: 0, ly: 0, t: 0, svx: 0, svy: 0, start: 0 };
+var dblState = { t: 0, x: 0, y: 0, body: null };
+var hoverB = null;
+
+function gdDown(e, d){
+  if(e.button !== 0 && e.pointerType === 'mouse') return;
+  e.preventDefault();
+  try { e.target.setPointerCapture(e.pointerId); } catch(err){}
+  pointer.x = e.clientX; pointer.y = e.clientY;
+
+  if(d.state === 'dock'){
+    var rp = d.el.getBoundingClientRect();
+    var cx = rp.left + rp.width / 2, cy = rp.top + rp.height / 2;
+    var t2 = GD(d.ch);
+    t2.cat = 1; t2.pop = 0;
+    t2.state = 'grab';
+    t2.body = null;
+    t2.wx = cx; t2.wy = cy;
+    t2.w = F * 0.7; t2.h = F;
+    grab = { kind: 'letter', obj: t2, gx: pointer.x - cx, gy: pointer.y - cy, lx: pointer.x, ly: pointer.y, t: performance.now(), start: pointer.x };
     DD.body.appendChild(t2.el);
-    place(t2,cx,cy,0,1,true);
+    place(t2, cx, cy, 0, 1, true);
     return;
   }
-  if(d.body&&!d.body.bh&&d.body.glyphs&&d.body.glyphs.indexOf(d)>=0){
-    var B=d.body;
-    if(dblState.body!==B){dblState.t=0;dblState.body=B;dblState.g=d;dblState.x=pointer.x;dblState.y=pointer.y;}
-    grab={kind:'body',obj:B,gx:pointer.x-B.x,gy:pointer.y-B.y,lx:pointer.x,ly:pointer.y,t:performance.now(),svx:B.vx,svy:B.vy,start:pointer.x,x0:pointer.x,y0:pointer.y};
+  if(d.body && !d.body.bh && d.body.glyphs && d.body.glyphs.indexOf(d) >= 0){
+    var B = d.body;
+    if(dblState.body !== B){ dblState.t = 0; dblState.body = B; dblState.g = d; dblState.x = pointer.x; dblState.y = pointer.y; }
+    grab = { kind: 'body', obj: B, gx: pointer.x - B.x, gy: pointer.y - B.y, lx: pointer.x, ly: pointer.y, t: performance.now(), svx: B.vx, svy: B.vy, start: pointer.x, x0: pointer.x, y0: pointer.y };
     DD.body.appendChild(d.el);
     return;
   }
-  if(d.state==='free'||d.state==='grab'){
-    grab={kind:'letter',obj:d,gx:pointer.x-d.wx,gy:pointer.y-d.wy,lx:pointer.x,ly:pointer.y,t:performance.now(),start:pointer.x};
+  if(d.state === 'free' || d.state === 'grab'){
+    grab = { kind: 'letter', obj: d, gx: pointer.x - d.wx, gy: pointer.y - d.wy, lx: pointer.x, ly: pointer.y, t: performance.now(), start: pointer.x };
     return;
   }
 }
-handle.addEventListener('pointerdown',function(e){
-  if(!hoverB||(!hoverB.hasA&&hoverB.kind!=='T'&&hoverB.kind!=='E'))return;
-  e.preventDefault();e.stopPropagation();
-  grab={kind:'rot',obj:hoverB,lx:pointer.x,ly:pointer.y,t:performance.now()};
+
+handle.addEventListener('pointerdown', function(e){
+  if(!hoverB || (!hoverB.hasA && hoverB.kind !== 'T' && hoverB.kind !== 'E')) return;
+  e.preventDefault(); e.stopPropagation();
+  try { e.target.setPointerCapture(e.pointerId); } catch(err){}
+  grab = { kind: 'rot', obj: hoverB, lx: pointer.x, ly: pointer.y, t: performance.now() };
 });
-cv.addEventListener('pointerdown',function(e){
-  var hit=null;
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    var dx=pointer.x-B.x,dy=pointer.y-B.y;
-    var th=B.th||0,c=Math.cos(th),s=Math.sin(th);
-    var lx=c*dx+s*dy,ly=-s*dx+c*dy;
-    if(Math.abs(lx)<(B.hw||30)+10&&Math.abs(ly)<(B.hh||24)+10)hit=B;
+
+cv.addEventListener('pointerdown', function(e){
+  pointer.x = e.clientX; pointer.y = e.clientY;
+  var hit = null;
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    var dx = pointer.x - B.x, dy = pointer.y - B.y;
+    var th = B.th || 0, c = Math.cos(th), s = Math.sin(th);
+    var lx = c * dx + s * dy, ly = -s * dx + c * dy;
+    if(Math.abs(lx) < (B.hw || 30) + 16 && Math.abs(ly) < (B.hh || 24) + 16) hit = B;
   }
-  if(hit&&!hit.bh){
-    if(dblState.body!==hit){dblState.t=0;dblState.body=hit;dblState.g=hit.massG;dblState.x=pointer.x;dblState.y=pointer.y;}
-    grab={kind:'body',obj:hit,gx:pointer.x-hit.x,gy:pointer.y-hit.y,lx:pointer.x,ly:pointer.y,t:performance.now(),svx:hit.vx,svy:hit.vy,start:pointer.x,x0:pointer.x,y0:pointer.y};
+  if(hit && !hit.bh){
+    e.preventDefault();
+    try { cv.setPointerCapture(e.pointerId); } catch(err){}
+    if(dblState.body !== hit){ dblState.t = 0; dblState.body = hit; dblState.g = hit.massG; dblState.x = pointer.x; dblState.y = pointer.y; }
+    grab = { kind: 'body', obj: hit, gx: pointer.x - hit.x, gy: pointer.y - hit.y, lx: pointer.x, ly: pointer.y, t: performance.now(), svx: hit.vx, svy: hit.vy, start: pointer.x, x0: pointer.x, y0: pointer.y };
   }
 });
-DD.addEventListener('pointermove',function(e){
-  pointer.x=e.clientX;pointer.y=e.clientY;
+
+DD.addEventListener('pointermove', function(e){
+  pointer.x = e.clientX; pointer.y = e.clientY;
   if(trashDrag.active){
-    trash.style.left=(pointer.x-17)+'px';
-    trash.style.top=(pointer.y-17)+'px';
+    trash.style.left = (pointer.x - 22) + 'px';
+    trash.style.top = (pointer.y - 22) + 'px';
     eraseUnderTrash();
     return;
   }
-  var onT=(grab.kind==='letter'||grab.kind==='body')&&inTrash(pointer.x,pointer.y);
-  trash.classList.toggle('on',onT);
-  if(grab.kind==='body'){
-    var B=grab.obj;
-    B.x=pointer.x-grab.gx;B.y=pointer.y-grab.gy;
-    var dt=(performance.now()-grab.t)/1000||0.016;
-    if(dt>0){
-      var spx=(pointer.x-grab.lx)/dt,spy=(pointer.y-grab.ly)/dt;
-      grab.svx=spx;grab.svy=spy;
-      B.vx=spx;B.vy=spy;
+  var onT = (grab.kind === 'letter' || grab.kind === 'body') && inTrash(pointer.x, pointer.y);
+  trash.classList.toggle('on', onT);
+  if(grab.kind === 'body'){
+    var B = grab.obj;
+    B.x = pointer.x - grab.gx; B.y = pointer.y - grab.gy;
+    var dt = (performance.now() - grab.t) / 1000 || 0.016;
+    if(dt > 0){
+      var spx = (pointer.x - grab.lx) / dt, spy = (pointer.y - grab.ly) / dt;
+      grab.svx = spx; grab.svy = spy;
+      B.vx = spx; B.vy = spy;
     }
-    grab.lx=pointer.x;grab.ly=pointer.y;grab.t=performance.now();
-    var ft=findFreeLetterTarget(B);
-    cv.style.cursor=ft?'copy':'grabbing';
-  }else if(grab.kind==='letter'){
-    var L=grab.obj;
-    L.wx=pointer.x-grab.gx;L.wy=pointer.y-grab.gy;
+    grab.lx = pointer.x; grab.ly = pointer.y; grab.t = performance.now();
+    var ft = findFreeLetterTarget(B);
+    cv.style.cursor = ft ? 'copy' : 'grabbing';
+  } else if(grab.kind === 'letter'){
+    var L = grab.obj;
+    L.wx = pointer.x - grab.gx; L.wy = pointer.y - grab.gy;
     placeLetter(L);
-    var dtt=(performance.now()-grab.t)/1000||0.016;
-    if(dtt>0){grab.svx=(pointer.x-grab.lx)/dtt;grab.svy=(pointer.y-grab.ly)/dtt;}
-    grab.lx=pointer.x;grab.ly=pointer.y;grab.t=performance.now();
-    var h=findMergeTarget(L);
-    cv.style.cursor=h?'copy':'default';
-  }else if(grab.kind==='rot'){
-    var Rb=grab.obj,s=tAnchor(Rb);
-    var a0=Math.atan2(grab.ly-s.y,grab.lx-s.x);
-    var a1=Math.atan2(pointer.y-s.y,pointer.x-s.x);
-    Rb.th=shortAng(Rb.th+(a1-a0));
-    grab.lx=pointer.x;grab.ly=pointer.y;
+    var dtt = (performance.now() - grab.t) / 1000 || 0.016;
+    if(dtt > 0){ grab.svx = (pointer.x - grab.lx) / dtt; grab.svy = (pointer.y - grab.ly) / dtt; }
+    grab.lx = pointer.x; grab.ly = pointer.y; grab.t = performance.now();
+    var h = findMergeTarget(L);
+    cv.style.cursor = h ? 'copy' : 'default';
+  } else if(grab.kind === 'rot'){
+    var Rb = grab.obj, s2 = tAnchor(Rb);
+    var a0 = Math.atan2(grab.ly - s2.y, grab.lx - s2.x);
+    var a1 = Math.atan2(pointer.y - s2.y, pointer.x - s2.x);
+    Rb.th = shortAng(Rb.th + (a1 - a0));
+    grab.lx = pointer.x; grab.ly = pointer.y;
   }
 });
-DD.addEventListener('pointerup',function(e){
-  pointer.x=e.clientX;pointer.y=e.clientY;
+
+DD.addEventListener('pointerup', function(e){
+  pointer.x = e.clientX; pointer.y = e.clientY;
   if(trashDrag.active){
-    trash.style.left='';trash.style.top='';
-    trash.style.right='24px';trash.style.bottom='24px';
+    trash.style.left = ''; trash.style.top = '';
+    trash.style.right = ''; trash.style.bottom = '';
     trash.classList.remove('on');
-    trashDrag.active=false;
-    grab.kind=null;grab.obj=null;
+    trashDrag.active = false;
+    grab.kind = null; grab.obj = null;
     return;
   }
   trash.classList.remove('on');
-  if(grab.kind==='body'){
-    var B=grab.obj;
-    if(inTrash(pointer.x,pointer.y)){
-      if(B.bh){explodeBlackHole(B);}
-      else{killBody(B);}
-      grab.kind=null;grab.obj=null;
+  if(grab.kind === 'body'){
+    var B = grab.obj;
+    if(inTrash(pointer.x, pointer.y)){
+      if(B.bh){ explodeBlackHole(B); }
+      else { killBody(B); }
+      grab.kind = null; grab.obj = null;
       return;
     }
-    if(inPanel(pointer.x,pointer.y)&&!B.kind){
-      for(var pi2=B.glyphs.length-1;pi2>=0;pi2--){if(B.glyphs[pi2].stk)killG(B.glyphs[pi2]);}
-      var rl=[];if(B.massG)rl.push(B.massG);
-      for(var mi3=0;mi3<B.mem.length;mi3++){if(B.mem[mi3]!==B.massG)rl.push(B.mem[mi3]);}
-      for(var ri=0;ri<rl.length;ri++){
-        var LG=rl[ri];
-        if(LG.body===B){LG.body=null;LG.inBody=false;}
-        LG.pop=0;
+    if(inPanel(pointer.x, pointer.y) && !B.kind){
+      for(var pi2 = B.glyphs.length - 1; pi2 >= 0; pi2--){ if(B.glyphs[pi2].stk) killG(B.glyphs[pi2]); }
+      var rl = []; if(B.massG) rl.push(B.massG);
+      for(var mi3 = 0; mi3 < B.mem.length; mi3++){ if(B.mem[mi3] !== B.massG) rl.push(B.mem[mi3]); }
+      for(var ri = 0; ri < rl.length; ri++){
+        var LG = rl[ri];
+        if(LG.body === B){ LG.body = null; LG.inBody = false; }
+        LG.pop = 0;
         dockLetter(LG);
       }
       killBody(B);
-      grab.kind=null;grab.obj=null;
+      grab.kind = null; grab.obj = null;
       return;
     }
     if(B.kind){
-      if(inPanel(pointer.x,pointer.y)){
+      if(inPanel(pointer.x, pointer.y)){
         killBody(B);
-        grab.kind=null;grab.obj=null;
+        grab.kind = null; grab.obj = null;
         return;
       }
-      var sp2=Math.hypot(grab.svx,grab.svy);
-      if(sp2>20){var f2=clamp(1-sp2/6000,0.5,1);B.vx=grab.svx*f2;B.vy=grab.svy*f2;}
-      else{B.vx=0;B.vy=0;}
-      grab.kind=null;grab.obj=null;
+      var sp2 = Math.hypot(grab.svx, grab.svy);
+      if(sp2 > 20){ var f2 = clamp(1 - sp2 / 6000, 0.5, 1); B.vx = grab.svx * f2; B.vy = grab.svy * f2; }
+      else { B.vx = 0; B.vy = 0; }
+      grab.kind = null; grab.obj = null;
       return;
     }
-    var ds=dblState;
-    var didSplit=false;
-    if(ds.body===B){
-      var mvd=Math.hypot(pointer.x-ds.x,pointer.y-ds.y);
-      var now=performance.now();
-      if(mvd<14){
-        if(ds.t>0&&now-ds.t<500){
-          splitOne(B,ds.g);
-          ds.t=0;ds.body=null;ds.g=null;
-          didSplit=true;
-        }else{
-          ds.t=now;ds.x=pointer.x;ds.y=pointer.y;
+    var ds = dblState;
+    var didSplit = false;
+    if(ds.body === B){
+      var mvd = Math.hypot(pointer.x - ds.x, pointer.y - ds.y);
+      var now = performance.now();
+      // 触屏端适当放宽点击容差至 30px
+      var tapLimit = (e.pointerType === 'touch') ? 30 : 14;
+      if(mvd < tapLimit){
+        if(ds.t > 0 && now - ds.t < 550){
+          splitOne(B, ds.g);
+          ds.t = 0; ds.body = null; ds.g = null;
+          didSplit = true;
+        } else {
+          ds.t = now; ds.x = pointer.x; ds.y = pointer.y;
         }
-      }else{
-        ds.t=0;ds.body=null;
+      } else {
+        ds.t = 0; ds.body = null;
       }
     }
-    if(didSplit){
-      grab.kind=null;grab.obj=null;
-      return;
+    if(didSplit){ grab.kind = null; grab.obj = null; return; }
+    if(Math.abs(grab.svx) > 20 || Math.abs(grab.svy) > 20){
+      var f = clamp(1 - Math.hypot(grab.svx, grab.svy) / 6000, 0.5, 1);
+      B.vx = grab.svx * f; B.vy = grab.svy * f;
+    } else {
+      B.vx = 0; B.vy = 0;
     }
-    if(Math.abs(grab.svx)>20||Math.abs(grab.svy)>20){
-      var f=clamp(1-Math.hypot(grab.svx,grab.svy)/6000,0.5,1);
-      B.vx=grab.svx*f;B.vy=grab.svy*f;
-    }else{
-      B.vx=0;B.vy=0;
-    }
-    var fl=findFreeLetterTarget(B);
-    if(fl){attach(B,fl);}
-  }else if(grab.kind==='letter'){
-    dblState.t=0;
-    var L=grab.obj;
-    if(inTrash(pointer.x,pointer.y)){
+    var fl = findFreeLetterTarget(B);
+    if(fl){ attach(B, fl); }
+  } else if(grab.kind === 'letter'){
+    dblState.t = 0;
+    var L = grab.obj;
+    if(inTrash(pointer.x, pointer.y)){
       killLetter(L);
-      grab.kind=null;grab.obj=null;
+      grab.kind = null; grab.obj = null;
       return;
     }
-    if(inPanel(pointer.x,pointer.y)){
+    if(inPanel(pointer.x, pointer.y)){
       killLetter(L);
-      grab.kind=null;grab.obj=null;
+      grab.kind = null; grab.obj = null;
       return;
     }
-    if(L.ch==='B'||L.ch==='q'||L.ch==='I'||L.ch==='E'){
-      spawnField(L.ch,L.wx,L.wy,grab.svx||0,grab.svy||0);
+    if(L.ch === 'B' || L.ch === 'q' || L.ch === 'I' || L.ch === 'E'){
+      spawnField(L.ch, L.wx, L.wy, grab.svx || 0, grab.svy || 0);
       killLetter(L);
-      grab.kind=null;grab.obj=null;
+      grab.kind = null; grab.obj = null;
       return;
     }
-    var tc=findTComboTarget(L);
-    if(tc){applyTCombo(L,tc);grab.kind=null;grab.obj=null;return;}
-    var B2=findMergeTarget(L);
+    var tc = findTComboTarget(L);
+    if(tc){ applyTCombo(L, tc); grab.kind = null; grab.obj = null; return; }
+    var B2 = findMergeTarget(L);
     if(B2){
-      attach(B2,L);
-    }else{
-      var FM=findFreeMassTarget(L);
+      attach(B2, L);
+    } else {
+      var FM = findFreeMassTarget(L);
       if(FM){
-        var fi3=freeL.indexOf(FM);if(fi3>=0)freeL.splice(fi3,1);
-        var nb3=BODY(FM.wx,FM.wy);
-        FM.pop=0;FM.body=nb3;FM.inBody=true;
-        nb3.massG=FM;nb3.glyphs=[FM];
+        var fi3 = freeL.indexOf(FM); if(fi3 >= 0) freeL.splice(fi3, 1);
+        var nb3 = BODY(FM.wx, FM.wy);
+        FM.pop = 0; FM.body = nb3; FM.inBody = true;
+        nb3.massG = FM; nb3.glyphs = [FM];
         refresh(nb3);
-        if(canMerge(nb3,L)){
-          attach(nb3,L);
-          ringGo(nb3.x,nb3.y);
-        }else{
-          var ri3=bodies.indexOf(nb3);if(ri3>=0)bodies.splice(ri3,1);
-          FM.body=null;FM.inBody=false;FM.pop=0;
-          if(freeL.indexOf(FM)<0)freeL.push(FM);
+        if(canMerge(nb3, L)){
+          attach(nb3, L);
+          ringGo(nb3.x, nb3.y);
+        } else {
+          var ri3 = bodies.indexOf(nb3); if(ri3 >= 0) bodies.splice(ri3, 1);
+          FM.body = null; FM.inBody = false; FM.pop = 0;
+          if(freeL.indexOf(FM) < 0) freeL.push(FM);
           placeLetter(FM);
-          if(isMass(L)||L.type==='G'){
-            var nb=BODY(L.wx,L.wy);
-            L.pop=0;L.body=nb;L.inBody=true;
-            if(isMass(L)){ nb.massG=L; nb.glyphs=[L]; refresh(nb); }
-            else { nb.glyphs=[L]; attach(nb,L); }
-            ringGo(nb.x,nb.y);
-          }else{
-            L.state='free';
-            var spd=Math.hypot(grab.svx,grab.svy);
-            if(spd>40){L.vx=grab.svx*clamp(1-spd/8000,0.4,1);L.vy=grab.svy*clamp(1-spd/8000,0.4,1);}
-            else{L.vx=0;L.vy=0;}
-            if(freeL.indexOf(L)<0)freeL.push(L);
+          if(isMass(L) || L.type === 'G'){
+            var nb = BODY(L.wx, L.wy);
+            L.pop = 0; L.body = nb; L.inBody = true;
+            if(isMass(L)){ nb.massG = L; nb.glyphs = [L]; refresh(nb); }
+            else { nb.glyphs = [L]; attach(nb, L); }
+            ringGo(nb.x, nb.y);
+          } else {
+            L.state = 'free';
+            var spd = Math.hypot(grab.svx, grab.svy);
+            if(spd > 40){ L.vx = grab.svx * clamp(1 - spd / 8000, 0.4, 1); L.vy = grab.svy * clamp(1 - spd / 8000, 0.4, 1); }
+            else { L.vx = 0; L.vy = 0; }
+            if(freeL.indexOf(L) < 0) freeL.push(L);
             placeLetter(L);
           }
         }
-      }else if(isMass(L)||L.type==='G'){
-        var nb=BODY(L.wx,L.wy);
-        L.pop=0;L.body=nb;L.inBody=true;
-        if(isMass(L)){ nb.massG=L; nb.glyphs=[L]; refresh(nb); }
-        else { nb.glyphs=[L]; attach(nb,L); }
-        ringGo(nb.x,nb.y);
-      }else{
-        L.state='free';
-        var spd=Math.hypot(grab.svx,grab.svy);
-        if(spd>40){L.vx=grab.svx*clamp(1-spd/8000,0.4,1);L.vy=grab.svy*clamp(1-spd/8000,0.4,1);}
-        else{L.vx=0;L.vy=0;}
-        if(freeL.indexOf(L)<0)freeL.push(L);
+      } else if(isMass(L) || L.type === 'G'){
+        var nb4 = BODY(L.wx, L.wy);
+        L.pop = 0; L.body = nb4; L.inBody = true;
+        if(isMass(L)){ nb4.massG = L; nb4.glyphs = [L]; refresh(nb4); }
+        else { nb4.glyphs = [L]; attach(nb4, L); }
+        ringGo(nb4.x, nb4.y);
+      } else {
+        L.state = 'free';
+        var spd2 = Math.hypot(grab.svx, grab.svy);
+        if(spd2 > 40){ L.vx = grab.svx * clamp(1 - spd2 / 8000, 0.4, 1); L.vy = grab.svy * clamp(1 - spd2 / 8000, 0.4, 1); }
+        else { L.vx = 0; L.vy = 0; }
+        if(freeL.indexOf(L) < 0) freeL.push(L);
         placeLetter(L);
       }
     }
-    cv.style.cursor='default';
+    cv.style.cursor = 'default';
   }
-  grab.kind=null;grab.obj=null;
+  grab.kind = null; grab.obj = null;
 });
-DD.addEventListener('pointercancel',function(){
-  if(grab.kind==='letter'&&grab.obj){
-    var L=grab.obj;
-    L.state='free';
-    if(freeL.indexOf(L)<0)freeL.push(L);
+
+DD.addEventListener('pointercancel', function(){
+  if(grab.kind === 'letter' && grab.obj){
+    var L = grab.obj;
+    L.state = 'free';
+    if(freeL.indexOf(L) < 0) freeL.push(L);
     placeLetter(L);
   }
-  grab.kind=null;grab.obj=null;cv.style.cursor='default';
+  grab.kind = null; grab.obj = null; cv.style.cursor = 'default';
 });
+
 function stepPhysics(dt){
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(B.kind==='B'||B.kind==='E')continue;
-    if(B.bh)continue;
-    if(grab.kind==='body'&&grab.obj===B)continue;
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(B.kind === 'B' || B.kind === 'E') continue;
+    if(B.bh) continue;
+    if(grab.kind === 'body' && grab.obj === B) continue;
     if(B.shatterBlast){
-      B.shatterBlast=false;
-      shatter(B,'split');
+      B.shatterBlast = false;
+      shatter(B, 'split');
       continue;
     }
-    if(B.hasG)B.vy+=GRAV*dt;
+    if(B.hasG) B.vy += GRAV * dt;
     if(B.hasA){
-      var th=B.th||0;
-      B.vx+=-AACC*Math.cos(th)*dt;
-      B.vy+=-AACC*Math.sin(th)*dt;
+      var th = B.th || 0;
+      B.vx += -AACC * Math.cos(th) * dt;
+      B.vy += -AACC * Math.sin(th) * dt;
     }
-    var damp=Math.pow(0.9992,dt*60);
-    if(B.kind!=='q'){B.vx*=damp;B.vy*=damp;}
-    B.x+=B.vx*dt;B.y+=B.vy*dt;
+    var damp = Math.pow(0.9992, dt * 60);
+    if(B.kind !== 'q'){ B.vx *= damp; B.vy *= damp; }
+    B.x += B.vx * dt; B.y += B.vy * dt;
     walls(B);
   }
-  for(var k=0;k<freeL.length;k++){
-    var d=freeL[k];
-    if(d.state==='grab'&&grab.kind==='letter'&&grab.obj===d)continue;
-    var massless=!!d.massless;
-    var fdmp=massless?Math.pow(0.45,dt):Math.pow(0.94,dt*60);
-    d.vx*=fdmp;d.vy*=fdmp;
-    d.x2=d.wx+d.vx*dt;d.y2=d.wy+d.vy*dt;
-    d.wx=d.x2;d.wy=d.y2;
-    if(d.wx<20){d.wx=20;d.vx=Math.abs(d.vx)*0.6;}
-    if(d.wx>W-20){d.wx=W-20;d.vx=-Math.abs(d.vx)*0.6;}
-    if(d.wy<20){d.wy=20;d.vy=Math.abs(d.vy)*0.6;}
-    if(!massless&&d.wy>groundY-8){d.wy=groundY-8;d.vy=-Math.abs(d.vy)*0.6;}
+  for(var k = 0; k < freeL.length; k++){
+    var d = freeL[k];
+    if(d.state === 'grab' && grab.kind === 'letter' && grab.obj === d) continue;
+    var massless = !!d.massless;
+    var fdmp = massless ? Math.pow(0.45, dt) : Math.pow(0.94, dt * 60);
+    d.vx *= fdmp; d.vy *= fdmp;
+    d.x2 = d.wx + d.vx * dt; d.y2 = d.wy + d.vy * dt;
+    d.wx = d.x2; d.wy = d.y2;
+    if(d.wx < 18){ d.wx = 18; d.vx = Math.abs(d.vx) * 0.6; }
+    if(d.wx > W - 18){ d.wx = W - 18; d.vx = -Math.abs(d.vx) * 0.6; }
+    if(d.wy < 18){ d.wy = 18; d.vy = Math.abs(d.vy) * 0.6; }
+    if(!massless && d.wy > groundY - 8){ d.wy = groundY - 8; d.vy = -Math.abs(d.vy) * 0.6; }
   }
 }
-function shatter(B,mode){
-  var i=bodies.indexOf(B);if(i>=0)bodies.splice(i,1);
-  var cx=B.x,cy=B.y;
-  var S=Math.hypot(B.vx,B.vy)||1;
-  var ux=-B.vx/S,uy=-B.vy/S;
-  var px=-uy,py=ux;
-  var base=S*0.275,spread=S*0.275;
-  for(var sk=B.glyphs.length-1;sk>=0;sk--){if(B.glyphs[sk].stk)killG(B.glyphs[sk]);}
-  var lets=[];
-  if(B.massG)lets.push(B.massG);
-  for(var j2=0;j2<B.mem.length;j2++)if(B.mem[j2]!==B.massG)lets.push(B.mem[j2]);
-  if(mode==='split'){
-    for(var q=0;q<lets.length;q++){
-      var L=lets[q];
-      if(L.body===B){L.body=null;L.inBody=false;}
-      L.pop=0;
-      var off=(q-(lets.length-1)/2)*28;
-      freeLetter(L,cx+px*off,cy+py*off, ux*base+px*spread*off/28, uy*base+py*spread*off/28, false);
+
+function shatter(B, mode){
+  var i = bodies.indexOf(B); if(i >= 0) bodies.splice(i, 1);
+  var cx = B.x, cy = B.y;
+  var S = Math.hypot(B.vx, B.vy) || 1;
+  var ux = -B.vx / S, uy = -B.vy / S;
+  var px = -uy, py = ux;
+  var base = S * 0.275, spread = S * 0.275;
+  for(var sk = B.glyphs.length - 1; sk >= 0; sk--){ if(B.glyphs[sk].stk) killG(B.glyphs[sk]); }
+  var lets = [];
+  if(B.massG) lets.push(B.massG);
+  for(var j2 = 0; j2 < B.mem.length; j2++) if(B.mem[j2] !== B.massG) lets.push(B.mem[j2]);
+  if(mode === 'split'){
+    for(var q = 0; q < lets.length; q++){
+      var L = lets[q];
+      if(L.body === B){ L.body = null; L.inBody = false; }
+      L.pop = 0;
+      var off = (q - (lets.length - 1) / 2) * 28;
+      freeLetter(L, cx + px * off, cy + py * off, ux * base + px * spread * off / 28, uy * base + py * spread * off / 28, false);
     }
-  }else{
-    for(var j=0;j<lets.length;j++){
-      var g=lets[j];
-      if(g.body===B){g.body=null;g.inBody=false;killLetter(g);}
+  } else {
+    for(var j = 0; j < lets.length; j++){
+      var g = lets[j];
+      if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); }
     }
   }
-  B.glyphs=[];B.mem=[];
-  if(mode==='formula'){
-    var roll=Math.random();
-    if(roll<0.4){
-      spawnFormula(1,cx+px*26,cy+py*26, ux*base+px*spread, uy*base+py*spread);
-      spawnFormula(2,cx-px*26,cy-py*26, ux*base-px*spread, uy*base-py*spread);
-    }else if(roll<0.7){
-      spawnFormula(3,cx+px*26,cy+py*26, ux*base+px*spread, uy*base+py*spread);
-      spawnFormula(4,cx-px*26,cy-py*26, ux*base-px*spread, uy*base-py*spread);
-    }else{
-      spawnFormula(5,cx,cy,ux*base*0.8,uy*base*0.8);
+  B.glyphs = []; B.mem = [];
+  if(mode === 'formula'){
+    var roll = Math.random();
+    if(roll < 0.4){
+      spawnFormula(1, cx + px * 26, cy + py * 26, ux * base + px * spread, uy * base + py * spread);
+      spawnFormula(2, cx - px * 26, cy - py * 26, ux * base - px * spread, uy * base - py * spread);
+    } else if(roll < 0.7){
+      spawnFormula(3, cx + px * 26, cy + py * 26, ux * base + px * spread, uy * base + py * spread);
+      spawnFormula(4, cx - px * 26, cy - py * 26, ux * base - px * spread, uy * base - py * spread);
+    } else {
+      spawnFormula(5, cx, cy, ux * base * 0.8, uy * base * 0.8);
     }
-  }else if(mode==='labels'){
-    spawnText('m₁v₁′',cx+px*26,cy+py*26, ux*base+px*spread, uy*base+py*spread);
-    spawnText('m₂v₂′',cx-px*26,cy-py*26, ux*base-px*spread, uy*base-py*spread);
+  } else if(mode === 'labels'){
+    spawnText('m₁v₁′', cx + px * 26, cy + py * 26, ux * base + px * spread, uy * base + py * spread);
+    spawnText('m₂v₂′', cx - px * 26, cy - py * 26, ux * base - px * spread, uy * base - py * spread);
   }
-  ringGo(cx,cy);
+  ringGo(cx, cy);
 }
+
 function walls(B){
   if(B.kind){
-    if(B.kind!=='T')return;
-    var lenh=B.len/2,c=Math.abs(Math.cos(B.th)),s=Math.abs(Math.sin(B.th));
-    var ex=lenh*c+B.hh*s,ey=lenh*s+B.hh*c;
-    if(B.y-ey<-8){B.y=-8+ey;B.vy=Math.abs(B.vy)*0.5;if(Math.abs(B.vy)<60)B.vy=0;}
-    if(B.y+ey>groundY){B.y=groundY-ey;B.vy=-Math.abs(B.vy)*0.5;if(Math.abs(B.vy)<60)B.vy=0;}
-    if(B.x-ex<-8){B.x=-8+ex;B.vx=Math.abs(B.vx)*0.5;if(Math.abs(B.vx)<60)B.vx=0;}
-    if(B.x+ex>W+8){B.x=W+8-ex;B.vx=-Math.abs(B.vx)*0.5;if(Math.abs(B.vx)<60)B.vx=0;}
+    if(B.kind !== 'T') return;
+    var lenh = B.len / 2, c = Math.abs(Math.cos(B.th)), s = Math.abs(Math.sin(B.th));
+    var ex = lenh * c + B.hh * s, ey = lenh * s + B.hh * c;
+    if(B.y - ey < -8){ B.y = -8 + ey; B.vy = Math.abs(B.vy) * 0.5; if(Math.abs(B.vy) < 60) B.vy = 0; }
+    if(B.y + ey > groundY){ B.y = groundY - ey; B.vy = -Math.abs(B.vy) * 0.5; if(Math.abs(B.vy) < 60) B.vy = 0; }
+    if(B.x - ex < -8){ B.x = -8 + ex; B.vx = Math.abs(B.vx) * 0.5; if(Math.abs(B.vx) < 60) B.vx = 0; }
+    if(B.x + ex > W + 8){ B.x = W + 8 - ex; B.vx = -Math.abs(B.vx) * 0.5; if(Math.abs(B.vx) < 60) B.vx = 0; }
     return;
   }
-  var sc=B.sc||1;
-  var hw=(B.hw||20)*sc,hh=(B.hh||18)*sc;
-  var el=B.hasV,e=el?0.92:0.28;
-  if(B.hasMu){
-    B.vx*=0.90;B.vy*=0.90;
-  }
-  var ox=0,oy=0;
-  if(B.orb&&B.orb.k>=0.02&&B.orb.gx!=null){ox=B.orb.gx-B.x;oy=B.orb.gy-B.y;}
-  var cxp=B.x+ox,cyp=B.y+oy;
+  var sc = B.sc || 1;
+  var hw = (B.hw || 20) * sc, hh = (B.hh || 18) * sc;
+  var el = B.hasV, e = el ? 0.92 : 0.28;
+  if(B.hasMu){ B.vx *= 0.90; B.vy *= 0.90; }
+  var ox = 0, oy = 0;
+  if(B.orb && B.orb.k >= 0.02 && B.orb.gx != null){ ox = B.orb.gx - B.x; oy = B.orb.gy - B.y; }
+  var cxp = B.x + ox, cyp = B.y + oy;
+
   function shatterIfFast(sp){
-    if(sp<SHATTER_SPEED)return false;
-    if(B.hasC&&B.cCount>=2)return false;
-    if(B.hasHalf&&B.vCount>=2){
-      shatter(B,'formula');
-      return true;
-    }
-    if(B.massG||B.mem.length){
-      shatter(B,'split');
-      return true;
-    }
+    if(sp < SHATTER_SPEED) return false;
+    if(B.hasC && B.cCount >= 2) return false;
+    if(B.hasHalf && B.vCount >= 2){ shatter(B, 'formula'); return true; }
+    if(B.massG || B.mem.length){ shatter(B, 'split'); return true; }
     return false;
   }
-  if(cyp-hh<-8){
-    if(shatterIfFast(Math.abs(B.vy)))return;
-    cyp=-8+hh;B.vy=Math.abs(B.vy)*e;if(!el)B.vx*=0.4;
+  if(cyp - hh < -8){
+    if(shatterIfFast(Math.abs(B.vy))) return;
+    cyp = -8 + hh; B.vy = Math.abs(B.vy) * e; if(!el) B.vx *= 0.4;
   }
-  if(cyp+hh>groundY){
-    if(shatterIfFast(Math.abs(B.vy)))return;
-    cyp=groundY-hh;B.vy=-Math.abs(B.vy)*e;if(!el)B.vx*=0.35;
+  if(cyp + hh > groundY){
+    if(shatterIfFast(Math.abs(B.vy))) return;
+    cyp = groundY - hh; B.vy = -Math.abs(B.vy) * e; if(!el) B.vx *= 0.35;
   }
-  if(cxp-hw<-8){
-    if(shatterIfFast(Math.abs(B.vx)))return;
-    cxp=-8+hw;B.vx=Math.abs(B.vx)*e;if(!el)B.vy*=0.55;
+  if(cxp - hw < -8){
+    if(shatterIfFast(Math.abs(B.vx))) return;
+    cxp = -8 + hw; B.vx = Math.abs(B.vx) * e; if(!el) B.vy *= 0.55;
   }
-  if(cxp+hw>W+8){
-    if(shatterIfFast(Math.abs(B.vx)))return;
-    cxp=W+8-hw;B.vx=-Math.abs(B.vx)*e;if(!el)B.vy*=0.55;
+  if(cxp + hw > W + 8){
+    if(shatterIfFast(Math.abs(B.vx))) return;
+    cxp = W + 8 - hw; B.vx = -Math.abs(B.vx) * e; if(!el) B.vy *= 0.55;
   }
-  B.x=cxp-ox;B.y=cyp-oy;
+  B.x = cxp - ox; B.y = cyp - oy;
 }
+
 function collideBodies(){
   function ext(B){
-    var th=B.th||0,c=Math.abs(Math.cos(th)),s=Math.abs(Math.sin(th));
-    var hw=B.hw||24,hh=B.hh||18;
-    return {ex:hw*c+hh*s,ey:hw*s+hh*c};
+    var th = B.th || 0, c = Math.abs(Math.cos(th)), s = Math.abs(Math.sin(th));
+    var hw = B.hw || 24, hh = B.hh || 18;
+    return { ex: hw * c + hh * s, ey: hw * s + hh * c };
   }
-  for(var i=0;i<bodies.length;i++){
-    var A=bodies[i];
-    if((A.kind&&A.kind!=='T')||A.bh)continue;
-    if(grab.kind==='body'&&grab.obj===A)continue;
-    var ea=ext(A);
-    for(var j=i+1;j<bodies.length;j++){
-      var B=bodies[j];
-      if((B.kind&&B.kind!=='T')||B.bh)continue;
-      if(grab.kind==='body'&&grab.obj===B)continue;
-      var eb=ext(B);
-      var aox=0,aoy=0; if(A.orb&&A.orb.k>=0.02&&A.orb.gx!=null){aox=A.orb.gx-A.x;aoy=A.orb.gy-A.y;}
-      var box=0,boy=0; if(B.orb&&B.orb.k>=0.02&&B.orb.gx!=null){box=B.orb.gx-B.x;boy=B.orb.gy-B.y;}
-      var dx=(B.x+box)-(A.x+aox),dy=(B.y+boy)-(A.y+aoy);
-      var ox=ea.ex+eb.ex-Math.abs(dx);
-      if(ox<=0)continue;
-      var oy=ea.ey+eb.ey-Math.abs(dy);
-      if(oy<=0)continue;
-      var nx=0,ny=0,ov=0;
-      if(ox<oy){nx=(dx>0)?1:-1;ov=ox;}else{ny=(dy>0)?1:-1;ov=oy;}
-      var mA=(A.kind==='T'?1e7:A.isWell?1e9:(A.bh?1e9:(A.mass||1))),mB=(B.kind==='T'?1e7:B.isWell?1e9:(B.bh?1e9:(B.mass||1))),sum=mA+mB;
-      var immA=(A.kind==='T')||A.isWell||!!A.bh, immB=(B.kind==='T')||B.isWell||!!B.bh;
-      if(!immA){A.x-=nx*ov*(mB/sum);A.y-=ny*ov*(mB/sum);}
-      if(!immB){B.x+=nx*ov*(mA/sum);B.y+=ny*ov*(mA/sum);}
-      var vn=(A.vx-B.vx)*nx+(A.vy-B.vy)*ny;
-      if(vn>0){
-        var e=(A.hasV&&B.hasV)?1:0.75;
-        var jimp=-(1+e)*vn/(1/mA+1/mB);
-        if(!immA){A.vx+=jimp*nx/mA;A.vy+=jimp*ny/mA;}
-        if(!immB){B.vx-=jimp*nx/mB;B.vy-=jimp*ny/mB;}
+  for(var i = 0; i < bodies.length; i++){
+    var A = bodies[i];
+    if((A.kind && A.kind !== 'T') || A.bh) continue;
+    if(grab.kind === 'body' && grab.obj === A) continue;
+    var ea = ext(A);
+    for(var j = i + 1; j < bodies.length; j++){
+      var B = bodies[j];
+      if((B.kind && B.kind !== 'T') || B.bh) continue;
+      if(grab.kind === 'body' && grab.obj === B) continue;
+      var eb = ext(B);
+      var aox = 0, aoy = 0; if(A.orb && A.orb.k >= 0.02 && A.orb.gx != null){ aox = A.orb.gx - A.x; aoy = A.orb.gy - A.y; }
+      var box = 0, boy = 0; if(B.orb && B.orb.k >= 0.02 && B.orb.gx != null){ box = B.orb.gx - B.x; boy = B.orb.gy - B.y; }
+      var dx = (B.x + box) - (A.x + aox), dy = (B.y + boy) - (A.y + aoy);
+      var ox = ea.ex + eb.ex - Math.abs(dx);
+      if(ox <= 0) continue;
+      var oy = ea.ey + eb.ey - Math.abs(dy);
+      if(oy <= 0) continue;
+      var nx = 0, ny = 0, ov = 0;
+      if(ox < oy){ nx = (dx > 0) ? 1 : -1; ov = ox; } else { ny = (dy > 0) ? 1 : -1; ov = oy; }
+      var mA = (A.kind === 'T' ? 1e7 : A.isWell ? 1e9 : (A.bh ? 1e9 : (A.mass || 1)));
+      var mB = (B.kind === 'T' ? 1e7 : B.isWell ? 1e9 : (B.bh ? 1e9 : (B.mass || 1)));
+      var sum = mA + mB;
+      var immA = (A.kind === 'T') || A.isWell || !!A.bh, immB = (B.kind === 'T') || B.isWell || !!B.bh;
+      if(!immA){ A.x -= nx * ov * (mB / sum); A.y -= ny * ov * (mB / sum); }
+      if(!immB){ B.x += nx * ov * (mA / sum); B.y += ny * ov * (mA / sum); }
+      var vn = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
+      if(vn > 0){
+        var e = (A.hasV && B.hasV) ? 1 : 0.75;
+        var jimp = -(1 + e) * vn / (1 / mA + 1 / mB);
+        if(!immA){ A.vx += jimp * nx / mA; A.vy += jimp * ny / mA; }
+        if(!immB){ B.vx -= jimp * nx / mB; B.vy -= jimp * ny / mB; }
       }
     }
   }
 }
+
 function refreshHover(){
-  hoverB=null;
-  if(grab.kind==='body'){hoverB=grab.obj;}
-  else{
-    var best=null,bd=1e9;
-    for(var i=0;i<bodies.length;i++){
-      var B=bodies[i];
-      var s=(B.kind==='T')?{x:B.x,y:B.y}:(B.massG?slot(B,B.massG):{x:B.x,y:B.y});
-      var dx=pointer.x-s.x,dy=pointer.y-s.y;
-      if(B.kind==='E'){
-        var hsE=(B.fieldR||E_FIELD_RANGE)/2;
-        if(Math.abs(dx)<=hsE&&Math.abs(dy)<=hsE){
-          var dE=Math.max(Math.abs(dx),Math.abs(dy));
-          if(dE<bd){bd=dE;best=B;}
+  hoverB = null;
+  if(grab.kind === 'body'){ hoverB = grab.obj; }
+  else {
+    var best = null, bd = 1e9;
+    for(var i = 0; i < bodies.length; i++){
+      var B = bodies[i];
+      var s = (B.kind === 'T') ? { x: B.x, y: B.y } : (B.massG ? slot(B, B.massG) : { x: B.x, y: B.y });
+      var dx = pointer.x - s.x, dy = pointer.y - s.y;
+      if(B.kind === 'E'){
+        var hsE = (B.fieldR || E_FIELD_RANGE) / 2;
+        if(Math.abs(dx) <= hsE && Math.abs(dy) <= hsE){
+          var dE = Math.max(Math.abs(dx), Math.abs(dy));
+          if(dE < bd){ bd = dE; best = B; }
         }
         continue;
       }
-      var rr=Math.max(34,(B.hw||30))+18;
-      var d=Math.sqrt(dx*dx+dy*dy);
-      if(d<rr&&d<bd){bd=d;best=B;}
+      var rr = Math.max(34, (B.hw || 30)) + 24;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if(d < rr && d < bd){ bd = d; best = B; }
     }
-    hoverB=best;
+    hoverB = best;
   }
-  if(hoverB&&(hoverB.hasA||hoverB.kind==='T'||hoverB.kind==='E')){
-    var s2=hoverB.massG?slot(hoverB,hoverB.massG):{x:hoverB.x,y:hoverB.y};
-    var th=hoverB.th||0;
-    var hh=Math.max(30,(hoverB.hh||24))+26;
-    if(hoverB.kind==='E'){
-      var hsE=(hoverB.fieldR||E_FIELD_RANGE)/2,cth=Math.cos(th),sth=Math.sin(th);
-      hh=hsE/Math.max(0.001,Math.max(Math.abs(cth),Math.abs(sth)));
+  if(hoverB && (hoverB.hasA || hoverB.kind === 'T' || hoverB.kind === 'E')){
+    var s2 = hoverB.massG ? slot(hoverB, hoverB.massG) : { x: hoverB.x, y: hoverB.y };
+    var th = hoverB.th || 0;
+    var hh = Math.max(30, (hoverB.hh || 24)) + 26;
+    if(hoverB.kind === 'E'){
+      var hsE2 = (hoverB.fieldR || E_FIELD_RANGE) / 2, cth = Math.cos(th), sth = Math.sin(th);
+      hh = hsE2 / Math.max(0.001, Math.max(Math.abs(cth), Math.abs(sth)));
     }
-    handle.style.left=(s2.x+Math.sin(th)*hh-15)+'px';
-    handle.style.top=(s2.y-Math.cos(th)*hh-15)+'px';
+    handle.style.left = (s2.x + Math.sin(th) * hh - 18) + 'px';
+    handle.style.top = (s2.y - Math.cos(th) * hh - 18) + 'px';
     handle.classList.add('on');
-  }else handle.classList.remove('on');
+  } else handle.classList.remove('on');
 }
+
 function copyBody(src){
   if(src.kind){
-    var nb=spawnField(src.kind,src.x+48+Math.random()*40-20,src.y+42+Math.random()*30-15,0,0);
-    if(src.kind==='E'){nb.th=src.th||0;}
-    else if(src.kind==='B'){nb.Bz=src.Bz;}
-    else if(src.kind==='q'){nb.qsign=src.qsign;}
-    else if(src.kind==='I'){nb.Isign=src.Isign;}
-    nb.pop=1;nb.orbPulse=1;nb.copied=true;
-    refresh(nb);
-    ringGo(nb.x,nb.y);
-    sortPanel();
+    var nb = spawnField(src.kind, src.x + 30 + Math.random() * 20, src.y + 30 + Math.random() * 20, 0, 0);
+    if(src.kind === 'E'){ nb.th = src.th || 0; }
+    else if(src.kind === 'B'){ nb.Bz = src.Bz; }
+    else if(src.kind === 'q'){ nb.qsign = src.qsign; }
+    else if(src.kind === 'I'){ nb.Isign = src.Isign; }
+    nb.pop = 1; nb.orbPulse = 1; nb.copied = true;
+    refresh(nb); ringGo(nb.x, nb.y); sortPanel();
     return nb;
   }
-  var ch=(src.massG&&src.massG.type==='M')?'M':'m';
-  var massN=GD(ch);
-  massN.pop=0;
-  var B=BODY(src.x+40+Math.random()*60-30,src.y+30+Math.random()*40-20);
-  B.massG=massN;
-  massN.body=B;
-  B.glyphs=[];B.mem=[];
-  var mm=[];
-  for(var i=0;i<src.mem.length;i++){
-    var c2=src.mem[i].type;
-    var g2=GD(c2);g2.pop=0;
-    B.mem.push(g2);
-    mm.push(g2);
+  var ch = (src.massG && src.massG.type === 'M') ? 'M' : 'm';
+  var massN = GD(ch);
+  massN.pop = 0;
+  var B = BODY(src.x + 30 + Math.random() * 20, src.y + 30 + Math.random() * 20);
+  B.massG = massN; massN.body = B;
+  B.glyphs = []; B.mem = [];
+  var mm = [];
+  for(var i = 0; i < src.mem.length; i++){
+    var c2 = src.mem[i].type;
+    var g2 = GD(c2); g2.pop = 0;
+    B.mem.push(g2); mm.push(g2);
   }
-  var list=[massN].concat(mm);
-  list.forEach(function(g){g.body=B;g.inBody=true;g.prev={x:0,y:0};B.glyphs.push(g);});
+  var list = [massN].concat(mm);
+  list.forEach(function(g){ g.body = B; g.inBody = true; g.prev = { x: 0, y: 0 }; B.glyphs.push(g); });
   refresh(B);
-  B.pop=1;
-  B.orbPulse=1;
-  B.copied=true;
-  ringGo(B.x,B.y);
-  var ms=slot(B,B.massG);
-  B.x+=src.x-ms.x;B.y+=src.y-ms.y;
+  B.pop = 1; B.orbPulse = 1; B.copied = true;
+  ringGo(B.x, B.y);
+  var ms = slot(B, B.massG);
+  B.x += src.x - ms.x; B.y += src.y - ms.y;
   refresh(B);
-  B.vx=60;B.vy=-40;
+  B.vx = 60; B.vy = -40;
   sortPanel();
 }
-function inTrash(x,y){
-  var r=trash.getBoundingClientRect();
-  return x>r.left-10&&x<r.right+10&&y>r.top-10&&y<r.bottom+10;
+
+function inTrash(x, y){
+  var r = trash.getBoundingClientRect();
+  return x > r.left - 15 && x < r.right + 15 && y > r.top - 15 && y < r.bottom + 15;
 }
-function inPanel(x,y){
-  var r=panel.getBoundingClientRect();
-  return x>r.left-12&&x<r.right+12&&y>r.top-12&&y<r.bottom+12;
+
+function inPanel(x, y){
+  var r = panel.getBoundingClientRect();
+  return x > r.left - 15 && x < r.right + 15 && y > r.top - 15 && y < r.bottom + 15;
 }
+
 function clearAll(){
   if(BH_FINALE){
-    for(var fz=0;fz<BH_FINALE.letters.length;fz++){
-      var Lz=BH_FINALE.letters[fz];
-      if(!Lz.arr){Lz.arr=true;if(Lz.el&&Lz.el.parentNode)Lz.el.parentNode.removeChild(Lz.el);}
+    for(var fz = 0; fz < BH_FINALE.letters.length; fz++){
+      var Lz = BH_FINALE.letters[fz];
+      if(!Lz.arr){ Lz.arr = true; if(Lz.el && Lz.el.parentNode) Lz.el.parentNode.removeChild(Lz.el); }
     }
-    BH_FINALE=null;
+    BH_FINALE = null;
   }
   resetTrashPos();
-  for(var i=bodies.length-1;i>=0;i--){
-    var B=bodies[i];
-    for(var j=0;j<B.glyphs.length;j++){
-      var g=B.glyphs[j];
-      if(g.body===B){g.body=null;g.inBody=false;killLetter(g);}
+  for(var i = bodies.length - 1; i >= 0; i--){
+    var B = bodies[i];
+    for(var j = 0; j < B.glyphs.length; j++){
+      var g = B.glyphs[j];
+      if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); }
     }
-    B.glyphs=[];B.mem=[];
-    if(B.bh)B.bh.dead=true;
-    bodies.splice(i,1);
+    B.glyphs = []; B.mem = [];
+    if(B.bh) B.bh.dead = true;
+    bodies.splice(i, 1);
   }
-  var kids=[mO,M2O,gO,aO,vO,rO,halfO,muO,cO,GO,tO,BO,EO,qO,IO];
-  var names=['mO','M2O','gO','aO','vO','rO','halfO','muO','cO','GO','tO','BO','EO','qO','IO'];
-  for(var i2=0;i2<kids.length;i2++){
-    var d=kids[i2];
-    var fi=freeL.indexOf(d);if(fi>=0)freeL.splice(fi,1);
+  var kids = [mO, M2O, gO, aO, vO, rO, halfO, muO, cO, GO, tO, BO, EO, qO, IO];
+  var names = ['mO', 'M2O', 'gO', 'aO', 'vO', 'rO', 'halfO', 'muO', 'cO', 'GO', 'tO', 'BO', 'EO', 'qO', 'IO'];
+  for(var i2 = 0; i2 < kids.length; i2++){
+    var d = kids[i2];
+    var fi = freeL.indexOf(d); if(fi >= 0) freeL.splice(fi, 1);
     if(d.dead){
-      var nd=GD(d.ch);
+      var nd = GD(d.ch);
       switch(names[i2]){
-        case 'mO':mO=nd;break;case 'M2O':M2O=nd;break;case 'gO':gO=nd;break;case 'aO':aO=nd;break;
-        case 'vO':vO=nd;break;case 'rO':rO=nd;break;case 'halfO':halfO=nd;break;case 'muO':muO=nd;break;
-        case 'cO':cO=nd;break;case 'GO':GO=nd;break;case 'tO':tO=nd;break;case 'BO':BO=nd;break;
-        case 'EO':EO=nd;break;case 'qO':qO=nd;break;case 'IO':IO=nd;break;
+        case 'mO': mO = nd; break; case 'M2O': M2O = nd; break; case 'gO': gO = nd; break; case 'aO': aO = nd; break;
+        case 'vO': vO = nd; break; case 'rO': rO = nd; break; case 'halfO': halfO = nd; break; case 'muO': muO = nd; break;
+        case 'cO': cO = nd; break; case 'GO': GO = nd; break; case 'tO': tO = nd; break; case 'BO': BO = nd; break;
+        case 'EO': EO = nd; break; case 'qO': qO = nd; break; case 'IO': IO = nd; break;
       }
-      d=nd;
+      d = nd;
     }
-    if(d.body){d.body=null;}
-    d.inBody=false;d.state='dock';d.pop=0;d.vx=0;d.vy=0;d.fade=null;d.bhShed=0;d.bhFade=null;
-    if(d.el&&d.el.parentNode!==panel)panel.appendChild(d.el);
-    if(d.el){d.el.style.display='';d.el.style.fontSize='34px';
-             d.el.style.left='';d.el.style.top='';d.el.style.transform='';d.el.style.opacity='';}
+    if(d.body){ d.body = null; }
+    d.inBody = false; d.state = 'dock'; d.pop = 0; d.vx = 0; d.vy = 0; d.fade = null; d.bhShed = 0; d.bhFade = null;
+    if(d.el && d.el.parentNode !== panel) panel.appendChild(d.el);
+    if(d.el){
+      d.el.style.display = ''; d.el.style.left = ''; d.el.style.top = ''; d.el.style.transform = ''; d.el.style.opacity = '';
+    }
   }
-  for(var k=freeL.length-1;k>=0;k--){killLetter(freeL[k]);freeL.splice(k,1);}
-  for(var f=formulas.length-1;f>=0;f--){killFormula(formulas[f]);formulas.splice(f,1);}
-  panel.style.opacity='';
-  var canon=[mO,M2O,gO,aO,vO,rO,halfO,muO,cO,GO,tO,BO,EO,qO,IO];
+  for(var k = freeL.length - 1; k >= 0; k--){ killLetter(freeL[k]); freeL.splice(k, 1); }
+  for(var f = formulas.length - 1; f >= 0; f--){ killFormula(formulas[f]); formulas.splice(f, 1); }
+  panel.style.opacity = '';
+  var canon = [mO, M2O, gO, aO, vO, rO, halfO, muO, cO, GO, tO, BO, EO, qO, IO];
   [].slice.call(panel.querySelectorAll('.char')).forEach(function(e){
-    var keep=false;
-    for(var ci=0;ci<canon.length;ci++)if(canon[ci].el===e){keep=true;break;}
-    if(!keep&&e.parentNode===panel)panel.removeChild(e);
+    var keep = false;
+    for(var ci = 0; ci < canon.length; ci++) if(canon[ci].el === e){ keep = true; break; }
+    if(!keep && e.parentNode === panel) panel.removeChild(e);
   });
   sortPanel();
 }
-trash.addEventListener('dblclick',function(e){e.preventDefault();clearAll();});
-var trashDrag={active:false};
-function overlap(a,b){return !(a.right<b.left||a.left>b.right||a.bottom<b.top||a.top>b.bottom);}
+
+trash.addEventListener('dblclick', function(e){ e.preventDefault(); clearAll(); });
+var trashDrag = { active: false };
+
+function overlap(a, b){ return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom); }
+
 function eraseUnderTrash(){
-  var r=trash.getBoundingClientRect();
-  for(var i=freeL.length-1;i>=0;i--){
-    var d=freeL[i];
-    if(overlap(r,d.el.getBoundingClientRect()))killLetter(d);
+  var r = trash.getBoundingClientRect();
+  for(var i = freeL.length - 1; i >= 0; i--){
+    var d = freeL[i];
+    if(overlap(r, d.el.getBoundingClientRect())) killLetter(d);
   }
-  for(var j=bodies.length-1;j>=0;j--){
-    var B=bodies[j],hit=false;
-    for(var k=0;k<B.glyphs.length;k++){
-      if(B.glyphs[k].el&&overlap(r,B.glyphs[k].el.getBoundingClientRect())){hit=true;break;}
+  for(var j = bodies.length - 1; j >= 0; j--){
+    var B = bodies[j], hit = false;
+    for(var k = 0; k < B.glyphs.length; k++){
+      if(B.glyphs[k].el && overlap(r, B.glyphs[k].el.getBoundingClientRect())){ hit = true; break; }
     }
-    if(hit)killBody(B);
+    if(hit) killBody(B);
   }
 }
-trash.addEventListener('pointerdown',function(e){
-  if(e.button!==0)return;
-  e.preventDefault();e.stopPropagation();
-  trashDrag.active=true;
-  var r=trash.getBoundingClientRect();
-  trash.style.right='auto';trash.style.bottom='auto';
-  trash.style.left=r.left+'px';trash.style.top=r.top+'px';
+
+trash.addEventListener('pointerdown', function(e){
+  if(e.button !== 0 && e.pointerType === 'mouse') return;
+  e.preventDefault(); e.stopPropagation();
+  try { trash.setPointerCapture(e.pointerId); } catch(err){}
+  trashDrag.active = true;
+  var r = trash.getBoundingClientRect();
+  trash.style.right = 'auto'; trash.style.bottom = 'auto';
+  trash.style.left = r.left + 'px'; trash.style.top = r.top + 'px';
   trash.classList.add('on');
 });
 
 function killLetter(d){
-  d.dead=true;
-  var i=freeL.indexOf(d);if(i>=0)freeL.splice(i,1);
-  i=freeG.indexOf(d);if(i>=0)freeG.splice(i,1);
-  i=ALL.indexOf(d);if(i>=0)ALL.splice(i,1);
-  if(d.el&&d.el.parentNode)d.el.parentNode.removeChild(d.el);
+  d.dead = true;
+  var i = freeL.indexOf(d); if(i >= 0) freeL.splice(i, 1);
+  i = freeG.indexOf(d); if(i >= 0) freeG.splice(i, 1);
+  i = ALL.indexOf(d); if(i >= 0) ALL.splice(i, 1);
+  if(d.el && d.el.parentNode) d.el.parentNode.removeChild(d.el);
 }
+
 function killBody(B){
-  var i=bodies.indexOf(B);if(i>=0)bodies.splice(i,1);
+  var i = bodies.indexOf(B); if(i >= 0) bodies.splice(i, 1);
   if(B.go){
-    var gD=B.go, txd=-Math.sin(gD.ang), tyd=Math.cos(gD.ang);
-    var P2=(gD.bin)?gD.by:null;
-    if(P2&&bodies.indexOf(P2)>=0){
-      P2.vx=txd*gD.w*(gD.rad*((gD.bin)?gD.rP:1));P2.vy=tyd*gD.w*(gD.rad*((gD.bin)?gD.rP:1));
-      P2.goB=null;
+    var gD = B.go, txd = -Math.sin(gD.ang), tyd = Math.cos(gD.ang);
+    var P2 = (gD.bin) ? gD.by : null;
+    if(P2 && bodies.indexOf(P2) >= 0){
+      P2.vx = txd * gD.w * (gD.rad * ((gD.bin) ? gD.rP : 1));
+      P2.vy = tyd * gD.w * (gD.rad * ((gD.bin) ? gD.rP : 1));
+      P2.goB = null;
     }
-    B.go=null;
+    B.go = null;
   }
-  if(B.goB&&bodies.indexOf(B.goB)>=0){
-    var H=B.goB,gH=H.go;
-    if(gH){var txd2=-Math.sin(gH.ang),tyd2=Math.cos(gH.ang);H.vx=txd2*gH.w*(gH.rad*gH.rB);H.vy=tyd2*gH.w*(gH.rad*gH.rB);H.go=null;}
-    H.goB=null;
-    B.goB=null;
+  if(B.goB && bodies.indexOf(B.goB) >= 0){
+    var H = B.goB, gH = H.go;
+    if(gH){ var txd2 = -Math.sin(gH.ang), tyd2 = Math.cos(gH.ang); H.vx = txd2 * gH.w * (gH.rad * gH.rB); H.vy = tyd2 * gH.w * (gH.rad * gH.rB); H.go = null; }
+    H.goB = null; B.goB = null;
   }
-  if(B.bh){B.bh.dead=true;B.bh=null;}
-  B.diss=true;
-  for(var j=0;j<B.glyphs.length;j++){
-    var g=B.glyphs[j];
-    if(g.body===B){
-      g.body=null;g.inBody=false;
-      killLetter(g);
-    }
+  if(B.bh){ B.bh.dead = true; B.bh = null; }
+  B.diss = true;
+  for(var j = 0; j < B.glyphs.length; j++){
+    var g = B.glyphs[j];
+    if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); }
   }
-  B.glyphs=[];B.mem=[];
+  B.glyphs = []; B.mem = [];
 }
-function metS(ch,size){
-  ctx2d.font='italic '+size+'px Georgia,"Times New Roman",serif';
-  var q=ctx2d.measureText(ch);
-  var fba=q.fontBoundingBoxAscent||size*0.8,fbd=q.fontBoundingBoxDescent||size*0.25;
-  var ia=q.actualBoundingBoxAscent||0,id=q.actualBoundingBoxDescent||0;
-  var bl=(size-(fba+fbd))/2+fba;
-  return {top:bl-ia-size/2,bot:bl+id-size/2,w:q.width};
+
+function metS(ch, size){
+  ctx2d.font = 'italic ' + size + 'px Georgia,"Times New Roman",serif';
+  var q = ctx2d.measureText(ch);
+  var fba = q.fontBoundingBoxAscent || size * 0.8, fbd = q.fontBoundingBoxDescent || size * 0.25;
+  var ia = q.actualBoundingBoxAscent || 0, id = q.actualBoundingBoxDescent || 0;
+  var bl = (size - (fba + fbd)) / 2 + fba;
+  return { top: bl - ia - size / 2, bot: bl + id - size / 2, w: q.width };
 }
-function mkFG(ch,size){
-  var el=DD.createElement('div');
-  el.className='char';
-  el.style.fontSize=size+'px';
-  el.style.pointerEvents='none';
-  el.style.cursor='default';
-  el.style.zIndex='8';
-  el.textContent=ch;
+
+function mkFG(ch, size){
+  var el = DD.createElement('div');
+  el.className = 'char';
+  el.style.fontSize = size + 'px';
+  el.style.pointerEvents = 'none';
+  el.style.zIndex = '8';
+  el.textContent = ch;
   DD.body.appendChild(el);
-  var m=metS(ch,size);
-  el.style.display='none';
-  var d={el:el,ch:ch,m:m,sx:0,sy:0,dead:false};
-  el._letterRef=d;
+  var m = metS(ch, size);
+  el.style.display = 'none';
+  var d = { el: el, ch: ch, m: m, sx: 0, sy: 0, dead: false };
+  el._letterRef = d;
   return d;
 }
-function buildFormulaGlyphs(Fo,which){
-  function tok(ch,sub){return {ch:ch,sub:sub?true:false};}
-  var lhs,COM='共';
-  var num,den;
-  if(which===1){
-    lhs=[tok('v'),tok(SUB1,true),tok(PRIME),tok('=')];
-    num=[tok('('),tok('m'),tok(SUB1,true),tok('−'),tok('m'),tok(SUB2,true),tok(')'),tok('v'),tok(SUB1,true),tok('+'),tok('2'),tok('m'),tok(SUB2,true),tok('v'),tok(SUB2,true)];
-    den=[tok('m'),tok(SUB1,true),tok('+'),tok('m'),tok(SUB2,true)];
-  }else if(which===2){
-    lhs=[tok('v'),tok(SUB2,true),tok(PRIME),tok('=')];
-    num=[tok('('),tok('m'),tok(SUB2,true),tok('−'),tok('m'),tok(SUB1,true),tok(')'),tok('v'),tok(SUB2,true),tok('+'),tok('2'),tok('m'),tok(SUB1,true),tok('v'),tok(SUB1,true)];
-    den=[tok('m'),tok(SUB2,true),tok('+'),tok('m'),tok(SUB1,true)];
-  }else if(which===3){
-    lhs=[tok('v'),tok(SUB1,true),tok(PRIME),tok('=')];
-    num=[tok('('),tok('m'),tok(SUB1,true),tok('−'),tok('m'),tok(SUB2,true),tok(')'),tok('v'),tok(SUB1,true)];
-    den=[tok('m'),tok(SUB1,true),tok('+'),tok('m'),tok(SUB2,true)];
-  }else if(which===4){
-    lhs=[tok('v'),tok(SUB2,true),tok(PRIME),tok('=')];
-    num=[tok('2'),tok('m'),tok(SUB1,true),tok('v'),tok(SUB1,true)];
-    den=[tok('m'),tok(SUB1,true),tok('+'),tok('m'),tok(SUB2,true)];
-  }else{
-    lhs=[tok('v'),tok(COM,true),tok('=')];
-    num=[tok('m'),tok(SUB1,true),tok('v'),tok(SUB1,true),tok('+'),tok('m'),tok(SUB2,true),tok('v'),tok(SUB2,true)];
-    den=[tok('m'),tok(SUB1,true),tok('+'),tok('m'),tok(SUB2,true)];
+
+function buildFormulaGlyphs(Fo, which){
+  function tok(ch, sub){ return { ch: ch, sub: sub ? true : false }; }
+  var lhs, COM = '共', num, den;
+  if(which === 1){
+    lhs = [tok('v'), tok(SUB1, true), tok(PRIME), tok('=')];
+    num = [tok('('), tok('m'), tok(SUB1, true), tok('−'), tok('m'), tok(SUB2, true), tok(')'), tok('v'), tok(SUB1, true), tok('+'), tok('2'), tok('m'), tok(SUB2, true), tok('v'), tok(SUB2, true)];
+    den = [tok('m'), tok(SUB1, true), tok('+'), tok('m'), tok(SUB2, true)];
+  } else if(which === 2){
+    lhs = [tok('v'), tok(SUB2, true), tok(PRIME), tok('=')];
+    num = [tok('('), tok('m'), tok(SUB2, true), tok('−'), tok('m'), tok(SUB1, true), tok(')'), tok('v'), tok(SUB2, true), tok('+'), tok('2'), tok('m'), tok(SUB1, true), tok('v'), tok(SUB1, true)];
+    den = [tok('m'), tok(SUB2, true), tok('+'), tok('m'), tok(SUB1, true)];
+  } else if(which === 3){
+    lhs = [tok('v'), tok(SUB1, true), tok(PRIME), tok('=')];
+    num = [tok('('), tok('m'), tok(SUB1, true), tok('−'), tok('m'), tok(SUB2, true), tok(')'), tok('v'), tok(SUB1, true)];
+    den = [tok('m'), tok(SUB1, true), tok('+'), tok('m'), tok(SUB2, true)];
+  } else if(which === 4){
+    lhs = [tok('v'), tok(SUB2, true), tok(PRIME), tok('=')];
+    num = [tok('2'), tok('m'), tok(SUB1, true), tok('v'), tok(SUB1, true)];
+    den = [tok('m'), tok(SUB1, true), tok('+'), tok('m'), tok(SUB2, true)];
+  } else {
+    lhs = [tok('v'), tok(COM, true), tok('=')];
+    num = [tok('m'), tok(SUB1, true), tok('v'), tok(SUB1, true), tok('+'), tok('m'), tok(SUB2, true), tok('v'), tok(SUB2, true)];
+    den = [tok('m'), tok(SUB1, true), tok('+'), tok('m'), tok(SUB2, true)];
   }
-  function sizeOf(t){return t.sub?F*0.62:F;}
+  function sizeOf(t){ return t.sub ? F * 0.62 : F; }
   function run(tokens){
-    var x=0,items=[];
-    for(var i=0;i<tokens.length;i++){
-      var t=tokens[i];
-      var g=mkFG(t.ch,sizeOf(t));
-      var w=g.m.w;
-      items.push({g:g,x0:x,w:w,sub:t.sub});
+    var x = 0, items = [];
+    for(var i = 0; i < tokens.length; i++){
+      var t = tokens[i];
+      var g = mkFG(t.ch, sizeOf(t));
+      var w = g.m.w;
+      items.push({ g: g, x0: x, w: w, sub: t.sub });
       Fo.glyphs.push(g);
-      x+=w+(i<tokens.length-1?3:0);
+      x += w + (i < tokens.length - 1 ? 3 : 0);
     }
-    return {items:items,width:x};
+    return { items: items, width: x };
   }
-  var L=run(lhs),N=run(num),D=run(den);
-  var fracW=Math.max(N.width,D.width)+14;
-  var barGap=5;
-  var nTop=1e9,nBot=-1e9;
-  N.items.forEach(function(it){var s=it.sub?0.62:1;nTop=Math.min(nTop,it.g.m.top*s);nBot=Math.max(nBot,it.g.m.bot*s);});
-  var nShift=-barGap-nBot;
-  N.items.forEach(function(it){it.g.sx=(-N.width/2)+it.x0+it.w/2;it.g.sy=nShift;});
-  var dTop=1e9,dBot=-1e9;
-  D.items.forEach(function(it){var s=it.sub?0.62:1;dTop=Math.min(dTop,it.g.m.top*s);dBot=Math.max(dBot,it.g.m.bot*s);});
-  var dShift=barGap-dTop;
-  D.items.forEach(function(it){it.g.sx=(-D.width/2)+it.x0+it.w/2;it.g.sy=dShift;});
-  var wholeTop=nTop+nShift, wholeBot=dBot+dShift;
-  var cY=-(wholeTop+wholeBot)/2;
-  N.items.forEach(function(it){it.g.sy+=cY;});
-  D.items.forEach(function(it){it.g.sy+=cY;});
-  var lhsX0=-(fracW/2)-8-L.width;
-  L.items.forEach(function(it){it.g.sx=lhsX0+it.x0+it.w/2;it.g.sy=cY;});
-  var totalL=lhsX0, totalR=fracW/2;
-  var cX=-(totalL+totalR)/2;
-  N.items.forEach(function(it){it.g.sx+=cX;});
-  D.items.forEach(function(it){it.g.sx+=cX;});
-  L.items.forEach(function(it){it.g.sx+=cX;});
-  Fo.bar={x1:cX-fracW/2,y:cY,x2:cX+fracW/2};
-  var extW=totalR-totalL,extH=wholeBot-wholeTop;
-  Fo.sc=clamp(150/Math.max(extW,extH),0.55,1);
-  Fo.hw=extW*Fo.sc/2;Fo.hh=extH*Fo.sc/2;
+  var L = run(lhs), N = run(num), D = run(den);
+  var fracW = Math.max(N.width, D.width) + 14;
+  var barGap = 5;
+  var nTop = 1e9, nBot = -1e9;
+  N.items.forEach(function(it){ var s = it.sub ? 0.62 : 1; nTop = Math.min(nTop, it.g.m.top * s); nBot = Math.max(nBot, it.g.m.bot * s); });
+  var nShift = -barGap - nBot;
+  N.items.forEach(function(it){ it.g.sx = (-N.width / 2) + it.x0 + it.w / 2; it.g.sy = nShift; });
+  var dTop = 1e9, dBot = -1e9;
+  D.items.forEach(function(it){ var s = it.sub ? 0.62 : 1; dTop = Math.min(dTop, it.g.m.top * s); dBot = Math.max(dBot, it.g.m.bot * s); });
+  var dShift = barGap - dTop;
+  D.items.forEach(function(it){ it.g.sx = (-D.width / 2) + it.x0 + it.w / 2; it.g.sy = dShift; });
+  var wholeTop = nTop + nShift, wholeBot = dBot + dShift;
+  var cY = -(wholeTop + wholeBot) / 2;
+  N.items.forEach(function(it){ it.g.sy += cY; });
+  D.items.forEach(function(it){ it.g.sy += cY; });
+  var lhsX0 = -(fracW / 2) - 8 - L.width;
+  L.items.forEach(function(it){ it.g.sx = lhsX0 + it.x0 + it.w / 2; it.g.sy = cY; });
+  var totalL = lhsX0, totalR = fracW / 2;
+  var cX = -(totalL + totalR) / 2;
+  N.items.forEach(function(it){ it.g.sx += cX; });
+  D.items.forEach(function(it){ it.g.sx += cX; });
+  L.items.forEach(function(it){ it.g.sx += cX; });
+  Fo.bar = { x1: cX - fracW / 2, y: cY, x2: cX + fracW / 2 };
+  var extW = totalR - totalL, extH = wholeBot - wholeTop;
+  Fo.sc = clamp(140 / Math.max(extW, extH), 0.55, 1);
+  Fo.hw = extW * Fo.sc / 2; Fo.hh = extH * Fo.sc / 2;
 }
-function spawnFormula(which,x,y,bvx,bvy){
-  var Fo={x:x,y:y,vx:bvx,vy:bvy,age:0,life:14,glyphs:[],alpha:1,dead:false,bar:null,sc:1,hw:60,hh:30,stoppedAt:null};
-  buildFormulaGlyphs(Fo,which);
-  var sc=Fo.sc||1;
-  for(var i=0;i<Fo.glyphs.length;i++){
-    var g=Fo.glyphs[i];
-    g.el.style.display='';
-    g.el.style.left=(x+g.sx*sc)+'px';
-    g.el.style.top=(y+g.sy*sc)+'px';
-    g.el.style.transform='translate(-50%,-50%) scale('+sc+')';
-    g.el.style.transformOrigin='center';
-    g.el.style.opacity='1';
+
+function spawnFormula(which, x, y, bvx, bvy){
+  var Fo = { x: x, y: y, vx: bvx, vy: bvy, age: 0, life: 14, glyphs: [], alpha: 1, dead: false, bar: null, sc: 1, hw: 60, hh: 30, stoppedAt: null };
+  buildFormulaGlyphs(Fo, which);
+  var sc = Fo.sc || 1;
+  for(var i = 0; i < Fo.glyphs.length; i++){
+    var g = Fo.glyphs[i];
+    g.el.style.display = '';
+    g.el.style.left = (x + g.sx * sc) + 'px';
+    g.el.style.top = (y + g.sy * sc) + 'px';
+    g.el.style.transform = 'translate(-50%,-50%) scale(' + sc + ')';
+    g.el.style.opacity = '1';
   }
   formulas.push(Fo);
   return Fo;
 }
-function spawnText(text,x,y,bvx,bvy){
-  var Fo={x:x,y:y,vx:bvx,vy:bvy,age:0,life:14,glyphs:[],alpha:1,dead:false,bar:null,sc:1,hw:60,hh:30,stoppedAt:null};
-  var g=mkFG(text,F*0.92);
-  g.sx=0;g.sy=0;
+
+function spawnText(text, x, y, bvx, bvy){
+  var Fo = { x: x, y: y, vx: bvx, vy: bvy, age: 0, life: 14, glyphs: [], alpha: 1, dead: false, bar: null, sc: 1, hw: 60, hh: 30, stoppedAt: null };
+  var g = mkFG(text, F * 0.92);
+  g.sx = 0; g.sy = 0;
   Fo.glyphs.push(g);
-  var w=g.el.offsetWidth||120,h=g.el.offsetHeight||44;
-  Fo.sc=clamp(150/Math.max(w,h),0.55,1);
-  Fo.hw=w*Fo.sc/2;Fo.hh=h*Fo.sc/2;
-  g.el.style.display='';
-  g.el.style.left=(x)+'px';
-  g.el.style.top=(y)+'px';
-  g.el.style.transform='translate(-50%,-50%) scale('+Fo.sc+')';
-  g.el.style.transformOrigin='center';
-  g.el.style.opacity='1';
+  var w = g.el.offsetWidth || 120, h = g.el.offsetHeight || 44;
+  Fo.sc = clamp(140 / Math.max(w, h), 0.55, 1);
+  Fo.hw = w * Fo.sc / 2; Fo.hh = h * Fo.sc / 2;
+  g.el.style.display = '';
+  g.el.style.left = (x) + 'px';
+  g.el.style.top = (y) + 'px';
+  g.el.style.transform = 'translate(-50%,-50%) scale(' + Fo.sc + ')';
+  g.el.style.opacity = '1';
   formulas.push(Fo);
   return Fo;
 }
+
 function stepFormulas(dt){
-  for(var i=formulas.length-1;i>=0;i--){
-    var F=formulas[i];
-    F.age+=dt;
-    if(F.hw&&pointer.x>F.x-F.hw&&pointer.x<F.x+F.hw&&pointer.y>F.y-F.hh&&pointer.y<F.y+F.hh){
-      F.stoppedAt=null;
+  for(var i = formulas.length - 1; i >= 0; i--){
+    var F2 = formulas[i];
+    F2.age += dt;
+    if(F2.hw && pointer.x > F2.x - F2.hw && pointer.x < F2.x + F2.hw && pointer.y > F2.y - F2.hh && pointer.y < F2.y + F2.hh){
+      F2.stoppedAt = null;
     }
-    var damp=Math.pow(0.22,dt);
-    F.vx*=damp;F.vy*=damp;
-    F.x+=F.vx*dt;F.y+=F.vy*dt;
-    var margin=22,e=0.9;
-    if(F.x<margin){F.x=margin;if(F.vx<0)F.vx=-F.vx*e;}
-    if(F.x>W-margin){F.x=W-margin;if(F.vx>0)F.vx=-F.vx*e;}
-    if(F.y<margin){F.y=margin;if(F.vy<0)F.vy=-F.vy*e;}
-    if(F.y>groundY-margin){F.y=groundY-margin;if(F.vy>0)F.vy=-F.vy*e;}
-    var sp=Math.hypot(F.vx,F.vy);
-    if(sp<26){ if(F.stoppedAt==null)F.stoppedAt=F.age; } else { F.stoppedAt=null; }
-    var a=1;
-    if(F.stoppedAt!=null){
-      var idle=F.age-F.stoppedAt-3.0;
-      if(idle>0){
-        var blink=0.35+0.65*Math.abs(Math.sin(F.age*6));
-        var fade=clamp(1-idle/2.0,0,1);
-        a=blink*fade;
-        if(idle>=2.0){ killFormula(F); formulas.splice(i,1); continue; }
+    var damp = Math.pow(0.22, dt);
+    F2.vx *= damp; F2.vy *= damp;
+    F2.x += F2.vx * dt; F2.y += F2.vy * dt;
+    var margin = 22, e = 0.9;
+    if(F2.x < margin){ F2.x = margin; if(F2.vx < 0) F2.vx = -F2.vx * e; }
+    if(F2.x > W - margin){ F2.x = W - margin; if(F2.vx > 0) F2.vx = -F2.vx * e; }
+    if(F2.y < margin){ F2.y = margin; if(F2.vy < 0) F2.vy = -F2.vy * e; }
+    if(F2.y > groundY - margin){ F2.y = groundY - margin; if(F2.vy > 0) F2.vy = -F2.vy * e; }
+    var sp = Math.hypot(F2.vx, F2.vy);
+    if(sp < 26){ if(F2.stoppedAt == null) F2.stoppedAt = F2.age; } else { F2.stoppedAt = null; }
+    var a = 1;
+    if(F2.stoppedAt != null){
+      var idle = F2.age - F2.stoppedAt - 3.0;
+      if(idle > 0){
+        var blink = 0.35 + 0.65 * Math.abs(Math.sin(F2.age * 6));
+        var fade = clamp(1 - idle / 2.0, 0, 1);
+        a = blink * fade;
+        if(idle >= 2.0){ killFormula(F2); formulas.splice(i, 1); continue; }
       }
     }
-    F.alpha=a;
-    var sc=F.sc||1;
-    for(var j=0;j<F.glyphs.length;j++){
-      var g=F.glyphs[j];
-      g.el.style.left=(F.x+g.sx*sc)+'px';
-      g.el.style.top=(F.y+g.sy*sc)+'px';
-      g.el.style.transform='translate(-50%,-50%) scale('+sc+')';
-      g.el.style.opacity=a;
+    F2.alpha = a;
+    var sc = F2.sc || 1;
+    for(var j = 0; j < F2.glyphs.length; j++){
+      var g = F2.glyphs[j];
+      g.el.style.left = (F2.x + g.sx * sc) + 'px';
+      g.el.style.top = (F2.y + g.sy * sc) + 'px';
+      g.el.style.transform = 'translate(-50%,-50%) scale(' + sc + ')';
+      g.el.style.opacity = a;
     }
-    if(F.age>=F.life){
-      killFormula(F);
-      formulas.splice(i,1);
+    if(F2.age >= F2.life){
+      killFormula(F2);
+      formulas.splice(i, 1);
     }
   }
 }
+
 function killFormula(F){
-  for(var i=0;i<F.glyphs.length;i++){
-    var g=F.glyphs[i];
-    if(g.el&&g.el.parentNode)g.el.parentNode.removeChild(g.el);
+  for(var i = 0; i < F.glyphs.length; i++){
+    var g = F.glyphs[i];
+    if(g.el && g.el.parentNode) g.el.parentNode.removeChild(g.el);
   }
-  F.glyphs=[];F.dead=true;
+  F.glyphs = []; F.dead = true;
 }
-var particles=[];
-var shakeAmp=0,shakeDur=0,shakeT=0,shakeOn=false;
-function shake(a,d){shakeAmp=Math.max(shakeAmp,a);shakeDur=Math.max(shakeDur,d);shakeT=0;shakeOn=true;}
+
+var particles = [];
+var shakeAmp = 0, shakeDur = 0, shakeT = 0, shakeOn = false;
+
+function shake(a, d){ shakeAmp = Math.max(shakeAmp, a); shakeDur = Math.max(shakeDur, d); shakeT = 0; shakeOn = true; }
+
 function stepParticles(dt){
-  for(var i=particles.length-1;i>=0;i--){
-    var p=particles[i];
-    p.age+=dt;
-    var damp=Math.pow(0.35,dt);
-    p.vx*=damp;p.vy*=damp;
-    p.x+=p.vx*dt;p.y+=p.vy*dt;
-    p.alpha=Math.max(0,1-p.age/p.life);
-    if(p.age>=p.life)particles.splice(i,1);
+  for(var i = particles.length - 1; i >= 0; i--){
+    var p = particles[i];
+    p.age += dt;
+    var damp = Math.pow(0.35, dt);
+    p.vx *= damp; p.vy *= damp;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.alpha = Math.max(0, 1 - p.age / p.life);
+    if(p.age >= p.life) particles.splice(i, 1);
   }
 }
-function spawnExplosion(cx,cy){
-  var N=240;
-  for(var i=0;i<N;i++){
-    var ang=Math.random()*6.2832;
-    var sp=120+Math.random()*820;
-    var r=1+Math.random()*2.4;
-    particles.push({x:cx+(Math.random()*10-5),y:cy+(Math.random()*10-5),vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,age:0,life:0.9+Math.random()*1.1,r:r,alpha:1});
+
+function spawnExplosion(cx, cy){
+  var N = 180;
+  for(var i = 0; i < N; i++){
+    var ang = Math.random() * 6.2832;
+    var sp = 120 + Math.random() * 700;
+    var r = 1 + Math.random() * 2.2;
+    particles.push({ x: cx + (Math.random() * 10 - 5), y: cy + (Math.random() * 10 - 5), vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, age: 0, life: 0.9 + Math.random() * 1.0, r: r, alpha: 1 });
   }
 }
-function blastAt(cx,cy,R){
-  for(var j=bodies.length-1;j>=0;j--){
-    var O=bodies[j];
-    if(O.kind||O.bh)continue;
-    if(grab.kind==='body'&&grab.obj===O)continue;
-    var dx=O.x-cx,dy=O.y-cy;
-    var d=Math.hypot(dx,dy);
-    if(d<=R){
-      var dirx=dx/(d||1),diry=dy/(d||1);
-      var fl=1200*(1-d/R)+240;
-      O.vx+=dirx*fl;O.vy+=diry*fl;
-      O.shatterBlast=true;
+
+function blastAt(cx, cy, R){
+  for(var j = bodies.length - 1; j >= 0; j--){
+    var O = bodies[j];
+    if(O.kind || O.bh) continue;
+    if(grab.kind === 'body' && grab.obj === O) continue;
+    var dx = O.x - cx, dy = O.y - cy;
+    var d = Math.hypot(dx, dy);
+    if(d <= R){
+      var dirx = dx / (d || 1), diry = dy / (d || 1);
+      var fl = 1100 * (1 - d / R) + 240;
+      O.vx += dirx * fl; O.vy += diry * fl;
+      O.shatterBlast = true;
     }
   }
-  for(var fl2=freeL.length-1;fl2>=0;fl2--){
-    var L2=freeL[fl2];
-    if(L2.state==='grab')continue;
-    var ldx=L2.wx-cx,ldy=L2.wy-cy;
-    if(Math.hypot(ldx,ldy)<=R){killLetter(L2);}
+  for(var fl2 = freeL.length - 1; fl2 >= 0; fl2--){
+    var L2 = freeL[fl2];
+    if(L2.state === 'grab') continue;
+    var ldx = L2.wx - cx, ldy = L2.wy - cy;
+    if(Math.hypot(ldx, ldy) <= R){ killLetter(L2); }
   }
-  for(var fx2=formulas.length-1;fx2>=0;fx2--){
-    var F=formulas[fx2];
-    var fdx=F.x-cx,fdy=F.y-cy;
-    var fd=Math.hypot(fdx,fdy);
-    if(fd<=R){
-      var k2=1-fd/R;
-      F.vx+=(fdx/(fd||1))*(900+500*k2);
-      F.vy+=(fdy/(fd||1))*(900+500*k2);
+  for(var fx2 = formulas.length - 1; fx2 >= 0; fx2--){
+    var F = formulas[fx2];
+    var fdx = F.x - cx, fdy = F.y - cy;
+    var fd = Math.hypot(fdx, fdy);
+    if(fd <= R){
+      var k2 = 1 - fd / R;
+      F.vx += (fdx / (fd || 1)) * (800 + 400 * k2);
+      F.vy += (fdy / (fd || 1)) * (800 + 400 * k2);
     }
   }
 }
+
 function explodeBody(B){
-  var cx=B.x,cy=B.y;
-  var i=bodies.indexOf(B);if(i>=0)bodies.splice(i,1);
-  spawnExplosion(cx,cy);
-  for(var j=0;j<B.glyphs.length;j++){var g=B.glyphs[j];if(g.body===B){g.body=null;g.inBody=false;killLetter(g);}}
-  B.glyphs=[];B.mem=[];
-  blastAt(cx,cy,300);
-  shake(16,0.55);
+  var cx = B.x, cy = B.y;
+  var i = bodies.indexOf(B); if(i >= 0) bodies.splice(i, 1);
+  spawnExplosion(cx, cy);
+  for(var j = 0; j < B.glyphs.length; j++){ var g = B.glyphs[j]; if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); } }
+  B.glyphs = []; B.mem = [];
+  blastAt(cx, cy, 280);
+  shake(14, 0.5);
 }
+
 function stepExplode(dt){
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(!B.exploding)continue;
-    B.explT+=dt;
-    var T=0.9;
-    var k=clamp(B.explT/T,0,1);
-    B.infl=1+0.7*k;
-    B.wob=Math.sin(B.explT*38)*0.05*k;
-    if(B.explT>=T){explodeBody(B);break;}
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(!B.exploding) continue;
+    B.explT += dt;
+    var T = 0.9;
+    var k = clamp(B.explT / T, 0, 1);
+    B.infl = 1 + 0.7 * k;
+    B.wob = Math.sin(B.explT * 38) * 0.05 * k;
+    if(B.explT >= T){ explodeBody(B); break; }
   }
 }
-var BH_MAXR=105;
-var BH_REACH=2000;
+
+var BH_MAXR = 90;
+var BH_REACH = 1600;
+
 function stepBlackHole(dt){
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(!B.bh)continue;
-    var bh=B.bh;
-    bh.age+=dt;bh.spin+=dt*(0.5+bh.r/60);
-    if(bh.stage===0){
-      bh.t+=dt;
-      var k=bh.t/0.8;
-      if(k>=1){bh.stage=1;bh.r=BH_MAXR;continue;}
-      var ek=1-Math.pow(1-clamp(k,0,1),3);
-      bh.r=BH_MAXR*ek*0.5;
-      var s=clamp(1-k*1.4,0,1);
-      B.infl=s;B.wob=Math.sin(bh.t*30)*0.3*k;
-      bh.fade=(k>0.7)?clamp(1-(k-0.7)*4,0,1):1;
-      if(k>=0.92){
-        B.glyphs.slice().forEach(function(g){if(g.body===B){g.body=null;g.inBody=false;killLetter(g);}});
-        B.glyphs=[];
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(!B.bh) continue;
+    var bh = B.bh;
+    bh.age += dt; bh.spin += dt * (0.5 + bh.r / 60);
+    if(bh.stage === 0){
+      bh.t += dt;
+      var k = bh.t / 0.8;
+      if(k >= 1){ bh.stage = 1; bh.r = BH_MAXR; continue; }
+      var ek = 1 - Math.pow(1 - clamp(k, 0, 1), 3);
+      bh.r = BH_MAXR * ek * 0.5;
+      var s = clamp(1 - k * 1.4, 0, 1);
+      B.infl = s; B.wob = Math.sin(bh.t * 30) * 0.3 * k;
+      bh.fade = (k > 0.7) ? clamp(1 - (k - 0.7) * 4, 0, 1) : 1;
+      if(k >= 0.92){
+        B.glyphs.slice().forEach(function(g){ if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); } });
+        B.glyphs = [];
       }
       continue;
     }
-    if(B.vx||B.vy){B.vx=0;B.vy=0;}
-    if(BH_FINALE&&BH_FINALE.hole===B)continue;
-    if(grab.kind==='body'&&grab.obj===B)continue;
-    var reach=BH_REACH;
-    for(var j=bodies.length-1;j>=0;j--){
-      var O=bodies[j];
-      if(O===B||O.bh)continue;
-      if(grab.kind==='body'&&grab.obj===O)continue;
-      var dx=B.x-O.x,dy=B.y-O.y;
-      var d=Math.hypot(dx,dy)||1;
-      if(d>reach){O.bhFade=null;O.bhShed=0;continue;}
-      var fall=(O.kind==='q'||O.kind==='I');
-      var src=(O.kind==='B'||O.kind==='E');
-      var taper=clamp(1-d/reach,0,1);
-      var inv=1/Math.max(d,20);
-      var ux2=dx*inv,uy2=dy*inv;
-      var tx2=-uy2,ty2=ux2;
-      var pull=(fall?1600:(src?5000:20000))*bh.r/(d*d)*(dt*60)*taper;
-      O.vx+=ux2*pull;O.vy+=uy2*pull;
-      O.vx+=tx2*pull*0.5;O.vy+=ty2*pull*0.5;
-      var drg=Math.pow(0.25,dt*1.6*Math.min(1,bh.r/Math.max(d,30)));
-      O.vx*=drg;O.vy*=drg;
-      if(src||O.kind==='T'){O.x+=O.vx*dt;O.y+=O.vy*dt;}
-      var near=clamp(1-(d-bh.r)/280,0,1);
-      if(near>0){
-        O.bhShed=(O.bhShed||0)+dt;
-        var iv=0.06-0.045*near;
-        if(O.bhShed>=iv){
-          O.bhShed=0;
-          burstParticles(O.x+(Math.random()*22-11),O.y+(Math.random()*22-11),2+Math.round(near*3),0.45);
+    if(B.vx || B.vy){ B.vx = 0; B.vy = 0; }
+    if(BH_FINALE && BH_FINALE.hole === B) continue;
+    if(grab.kind === 'body' && grab.obj === B) continue;
+    var reach = BH_REACH;
+    for(var j = bodies.length - 1; j >= 0; j--){
+      var O = bodies[j];
+      if(O === B || O.bh) continue;
+      if(grab.kind === 'body' && grab.obj === O) continue;
+      var dx = B.x - O.x, dy = B.y - O.y;
+      var d = Math.hypot(dx, dy) || 1;
+      if(d > reach){ O.bhFade = null; O.bhShed = 0; continue; }
+      var fall = (O.kind === 'q' || O.kind === 'I');
+      var src = (O.kind === 'B' || O.kind === 'E');
+      var taper = clamp(1 - d / reach, 0, 1);
+      var inv = 1 / Math.max(d, 20);
+      var ux2 = dx * inv, uy2 = dy * inv;
+      var tx2 = -uy2, ty2 = ux2;
+      var pull = (fall ? 1600 : (src ? 5000 : 20000)) * bh.r / (d * d) * (dt * 60) * taper;
+      O.vx += ux2 * pull; O.vy += uy2 * pull;
+      O.vx += tx2 * pull * 0.5; O.vy += ty2 * pull * 0.5;
+      var drg = Math.pow(0.25, dt * 1.6 * Math.min(1, bh.r / Math.max(d, 30)));
+      O.vx *= drg; O.vy *= drg;
+      if(src || O.kind === 'T'){ O.x += O.vx * dt; O.y += O.vy * dt; }
+      var near = clamp(1 - (d - bh.r) / 280, 0, 1);
+      if(near > 0){
+        O.bhShed = (O.bhShed || 0) + dt;
+        var iv = 0.06 - 0.045 * near;
+        if(O.bhShed >= iv){
+          O.bhShed = 0;
+          burstParticles(O.x + (Math.random() * 22 - 11), O.y + (Math.random() * 22 - 11), 2 + Math.round(near * 3), 0.45);
         }
-        O.bhFade=clamp(1-near*1.1,0.06,1);
+        O.bhFade = clamp(1 - near * 1.1, 0.06, 1);
       }
-      if(d<bh.r+16){
-        if(fall||src){
-          burstParticles(O.x,O.y,12,1);
-          killFieldBody(O,j);
-        }else{
-          annihBody(O,j);
+      if(d < bh.r + 16){
+        if(fall || src){
+          burstParticles(O.x, O.y, 12, 1);
+          killFieldBody(O, j);
+        } else {
+          annihBody(O, j);
         }
       }
     }
-    for(var fl=freeL.length-1;fl>=0;fl--){
-      var L2=freeL[fl];
-      if(L2.state==='grab')continue;
-      var fdx=B.x-L2.wx,fdy=B.y-L2.wy;
-      var fd=Math.hypot(fdx,fdy)||1;
-      if(fd>reach)continue;
-      var fux=fdx/fd,fuy=fdy/fd;
-      var ftap=clamp(1-fd/reach,0,1);
-      var fpull=(26000*bh.r)/(fd*fd)*(dt*60)*ftap;
-      L2.vx+=fux*fpull*2.2;L2.vy+=fuy*fpull*2.2;
-      L2.vx+=(-fuy)*fpull*0.5;L2.vy+=(fux)*fpull*0.5;
-      var fnear=clamp(1-(fd-bh.r)/280,0,1);
-      if(fnear>0){
-        L2.bhShed=(L2.bhShed||0)+dt;
-        var fiv=0.06-0.045*fnear;
-        if(L2.bhShed>=fiv){
-          L2.bhShed=0;
-          burstParticles(L2.wx+(Math.random()*10-5),L2.wy+(Math.random()*10-5),1+Math.round(fnear*2),0.4);
+    for(var fl = freeL.length - 1; fl >= 0; fl--){
+      var L2 = freeL[fl];
+      if(L2.state === 'grab') continue;
+      var fdx = B.x - L2.wx, fdy = B.y - L2.wy;
+      var fd = Math.hypot(fdx, fdy) || 1;
+      if(fd > reach) continue;
+      var fux = fdx / fd, fuy = fdy / fd;
+      var ftap = clamp(1 - fd / reach, 0, 1);
+      var fpull = (26000 * bh.r) / (fd * fd) * (dt * 60) * ftap;
+      L2.vx += fux * fpull * 2.2; L2.vy += fuy * fpull * 2.2;
+      L2.vx += (-fuy) * fpull * 0.5; L2.vy += (fux) * fpull * 0.5;
+      var fnear = clamp(1 - (fd - bh.r) / 280, 0, 1);
+      if(fnear > 0){
+        L2.bhShed = (L2.bhShed || 0) + dt;
+        var fiv = 0.06 - 0.045 * fnear;
+        if(L2.bhShed >= fiv){
+          L2.bhShed = 0;
+          burstParticles(L2.wx + (Math.random() * 10 - 5), L2.wy + (Math.random() * 10 - 5), 1 + Math.round(fnear * 2), 0.4);
         }
-        L2.fade=clamp(1-fnear*1.0,0.1,1);
+        L2.fade = clamp(1 - fnear * 1.0, 0.1, 1);
       }
-      if(fd<bh.r+8){killLetter(L2);burstParticles(B.x,B.y,14,1);}
+      if(fd < bh.r + 8){ killLetter(L2); burstParticles(B.x, B.y, 14, 1); }
     }
-    for(var fx=formulas.length-1;fx>=0;fx--){
-      var F=formulas[fx];
-      var fx2=B.x-F.x,fy2=B.y-F.y;
-      var fd2=Math.hypot(fx2,fy2)||1;
-      if(fd2>reach)continue;
-      var fux2=fx2/fd2,fuy2=fy2/fd2;
-      var ftap2=clamp(1-fd2/reach,0,1);
-      var fp=(20000*bh.r)/(fd2*fd2)*(dt*60)*ftap2;
-      F.vx+=fux2*fp*2.2-fuy2*fp*0.5;F.vy+=fuy2*fp*2.2+fux2*fp*0.5;
-      if(fd2<bh.r+10){killFormula(F);formulas.splice(fx,1);burstParticles(B.x,B.y,14,1);}
+    for(var fx = formulas.length - 1; fx >= 0; fx--){
+      var F3 = formulas[fx];
+      var fx2 = B.x - F3.x, fy2 = B.y - F3.y;
+      var fd2 = Math.hypot(fx2, fy2) || 1;
+      if(fd2 > reach) continue;
+      var fux2 = fx2 / fd2, fuy2 = fy2 / fd2;
+      var ftap2 = clamp(1 - fd2 / reach, 0, 1);
+      var fp = (20000 * bh.r) / (fd2 * fd2) * (dt * 60) * ftap2;
+      F3.vx += fux2 * fp * 2.2 - fuy2 * fp * 0.5; F3.vy += fuy2 * fp * 2.2 + fux2 * fp * 0.5;
+      if(fd2 < bh.r + 10){ killFormula(F3); formulas.splice(fx, 1); burstParticles(B.x, B.y, 14, 1); }
     }
-    for(var pi=particles.length-1;pi>=0;pi--){
-      var p=particles[pi];
-      var pdx=B.x-p.x,pdy=B.y-p.y;
-      var pd=Math.hypot(pdx,pdy)||1;
-      if(pd>reach)continue;
-      var pux=pdx/pd,puy=pdy/pd;
-      var ptap=clamp(1-pd/reach,0,1);
-      var ppull=(30000*bh.r)/(pd*pd)*(dt*60)*ptap;
-      p.vx+=pux*ppull*1.6-puy*ppull*0.5;
-      p.vy+=puy*ppull*1.6+pux*ppull*0.5;
-      if(pd<bh.r*0.75){particles.splice(pi,1);}
+    for(var pi = particles.length - 1; pi >= 0; pi--){
+      var p = particles[pi];
+      var pdx = B.x - p.x, pdy = B.y - p.y;
+      var pd = Math.hypot(pdx, pdy) || 1;
+      if(pd > reach) continue;
+      var pux = pdx / pd, puy = pdy / pd;
+      var ptap = clamp(1 - pd / reach, 0, 1);
+      var ppull = (30000 * bh.r) / (pd * pd) * (dt * 60) * ptap;
+      p.vx += pux * ppull * 1.6 - puy * ppull * 0.5;
+      p.vy += puy * ppull * 1.6 + pux * ppull * 0.5;
+      if(pd < bh.r * 0.75){ particles.splice(pi, 1); }
     }
-    stepBlackHolePanel(B,bh,dt);
-    bh.r=BH_MAXR+Math.sin(bh.age*2.2)*3;
+    stepBlackHolePanel(B, bh, dt);
+    bh.r = BH_MAXR + Math.sin(bh.age * 2.2) * 3;
   }
 }
+
 function ensurePanelEat(bh){
-  if(bh.panelEat)return;
-  bh.panelEat={t:0.45+Math.random()*0.35};
+  if(bh.panelEat) return;
+  bh.panelEat = { t: 0.45 + Math.random() * 0.35 };
 }
-function stepBlackHolePanel(B,bh,dt){
+
+function stepBlackHolePanel(B, bh, dt){
   ensurePanelEat(bh);
-  var pe=bh.panelEat;
-  if(!pe)return;
-  pe.t-=dt;
-  if(pe.t>0)return;
-  var pool=[];
-  var chars=[].slice.call(panel.querySelectorAll('.char'));
-  for(var i=0;i<chars.length;i++){
-    var r=chars[i].getBoundingClientRect();
-    var ref=chars[i]._letterRef;
-    if(ref&&ref.state==='dock'&&ref.el===chars[i]){
-      pool.push({cx:r.x+r.width/2,cy:r.y+r.height/2,d:ref});
+  var pe = bh.panelEat;
+  if(!pe) return;
+  pe.t -= dt;
+  if(pe.t > 0) return;
+  var pool = [];
+  var chars = [].slice.call(panel.querySelectorAll('.char'));
+  for(var i = 0; i < chars.length; i++){
+    var r = chars[i].getBoundingClientRect();
+    var ref = chars[i]._letterRef;
+    if(ref && ref.state === 'dock' && ref.el === chars[i]){
+      pool.push({ cx: r.x + r.width / 2, cy: r.y + r.height / 2, d: ref });
     }
   }
-  if(!pool.length)return;
-  var rr=Math.random();
-  var count=rr<0.38?1:rr<0.68?2:rr<0.88?3:4;
-  if(count>pool.length)count=pool.length;
-  for(var c=0;c<count;c++){
-    var idx=Math.floor(Math.random()*pool.length);
-    var cell=pool[idx];
-    pool.splice(idx,1);
-    if(!cell||!cell.d)continue;
-    var dx=B.x-cell.cx,dy=B.y-cell.cy,dd=Math.hypot(dx,dy)||1;
-    var sp=180+Math.random()*300;
-    var jx=(Math.random()-0.5)*130,jy=(Math.random()-0.5)*130;
-    freeLetter(cell.d,cell.cx,cell.cy,(dx/dd)*sp+jx,(dy/dd)*sp+jy,1);
+  if(!pool.length) return;
+  var rr = Math.random();
+  var count = rr < 0.38 ? 1 : rr < 0.68 ? 2 : rr < 0.88 ? 3 : 4;
+  if(count > pool.length) count = pool.length;
+  for(var c = 0; c < count; c++){
+    var idx = Math.floor(Math.random() * pool.length);
+    var cell = pool[idx];
+    pool.splice(idx, 1);
+    if(!cell || !cell.d) continue;
+    var dx = B.x - cell.cx, dy = B.y - cell.cy, dd = Math.hypot(dx, dy) || 1;
+    var sp = 180 + Math.random() * 300;
+    var jx = (Math.random() - 0.5) * 130, jy = (Math.random() - 0.5) * 130;
+    freeLetter(cell.d, cell.cx, cell.cy, (dx / dd) * sp + jx, (dy / dd) * sp + jy, 1);
   }
-  pe.t=0.5+Math.random()*1.15;
+  pe.t = 0.5 + Math.random() * 1.15;
 }
-var BH_FINALE=null;
-var BH_CHARS=['m','M','g','a','v','r','½','μ','c','G','t','B','E','q','I'];
-function finaleSlot(i,pr){
-  var col=i%4,row=Math.floor(i/4);
-  return {x:pr.left+10+col*50+22,y:pr.top+10+row*50+22};
+
+var BH_FINALE = null;
+var BH_CHARS = ['m', 'M', 'g', 'a', 'v', 'r', '½', 'μ', 'c', 'G', 't', 'B', 'E', 'q', 'I'];
+
+function finaleSlot(i, pr){
+  var isNarrow = window.innerWidth <= 640;
+  var size = isNarrow ? 36 : 44, gap = isNarrow ? 4 : 6, pad = isNarrow ? 6 : 10;
+  var col = i % 4, row = Math.floor(i / 4);
+  return { x: pr.left + pad + col * (size + gap) + size / 2, y: pr.top + pad + row * (size + gap) + size / 2 };
 }
+
 function resetTrashPos(){
-  trash.style.left='';trash.style.top='';trash.style.transform='';
-  trash.style.right='24px';trash.style.bottom='24px';
+  trash.style.left = ''; trash.style.top = ''; trash.style.transform = '';
+  trash.style.right = ''; trash.style.bottom = '';
 }
-function trashTo(px,py){
-  trash.style.right='auto';trash.style.bottom='auto';
-  trash.style.left=px+'px';trash.style.top=py+'px';
+
+function trashTo(px, py){
+  trash.style.right = 'auto'; trash.style.bottom = 'auto';
+  trash.style.left = px + 'px'; trash.style.top = py + 'px';
 }
+
 function trashCenter(){
-  var r=trash.getBoundingClientRect();
-  return {x:r.left+r.width/2,y:r.top+r.height/2};
+  var r = trash.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
+
 function maybeStartFinale(){
-  if(BH_FINALE)return;
-  if(grab.kind||trashDrag.active)return;
-  var hole=null;
-  for(var i=0;i<bodies.length;i++){
-    var Bx=bodies[i];
-    if(Bx.bh&&Bx.bh.stage===1){hole=Bx;break;}
+  if(BH_FINALE) return;
+  if(grab.kind || trashDrag.active) return;
+  var hole = null;
+  for(var i = 0; i < bodies.length; i++){
+    var Bx = bodies[i];
+    if(Bx.bh && Bx.bh.stage === 1){ hole = Bx; break; }
   }
-  if(!hole)return;
-  var docked=false;
-  var chars=panel.querySelectorAll('.char');
-  for(var j=0;j<chars.length;j++){
-    var ref=chars[j]._letterRef;
-    if(ref&&ref.state==='dock'){docked=true;break;}
+  if(!hole) return;
+  var docked = false;
+  var chars = panel.querySelectorAll('.char');
+  for(var j = 0; j < chars.length; j++){
+    var ref = chars[j]._letterRef;
+    if(ref && ref.state === 'dock'){ docked = true; break; }
   }
-  if(docked)return;
-  if(bodies.length>1)return;
-  if(freeL.length||formulas.length)return;
-  var bin=trash.getBoundingClientRect();
-  hole.bh.finalizing=true;
-  BH_FINALE={ph:'pull',t:0,hole:hole,
-    hx:hole.x,hy:hole.y,
-    bl:bin.left,bt:bin.top,bw:bin.width,bhh:bin.height,
-    pullD:1.05,suckD:0.55,shakeD:0.85,letters:[],removed:false};
+  if(docked) return;
+  if(bodies.length > 1) return;
+  if(freeL.length || formulas.length) return;
+  var bin = trash.getBoundingClientRect();
+  hole.bh.finalizing = true;
+  BH_FINALE = {
+    ph: 'pull', t: 0, hole: hole,
+    hx: hole.x, hy: hole.y,
+    bl: bin.left, bt: bin.top, bw: bin.width, bhh: bin.height,
+    pullD: 1.05, suckD: 0.55, shakeD: 0.85, letters: [], removed: false
+  };
 }
-function suckPuff(x,y,tx,ty){
-  for(var n=0;n<3;n++){
-    var a=Math.random()*6.2832;
-    particles.push({x:x+(Math.random()*10-5),y:y+(Math.random()*10-5),
-      vx:Math.cos(a)*60+(tx-x)*1.6,vy:Math.sin(a)*60+(ty-y)*1.6,
-      age:0,life:0.28+Math.random()*0.22,r:1+Math.random()*1.4,alpha:1});
+
+function suckPuff(x, y, tx, ty){
+  for(var n = 0; n < 3; n++){
+    var a = Math.random() * 6.2832;
+    particles.push({
+      x: x + (Math.random() * 10 - 5), y: y + (Math.random() * 10 - 5),
+      vx: Math.cos(a) * 60 + (tx - x) * 1.6, vy: Math.sin(a) * 60 + (ty - y) * 1.6,
+      age: 0, life: 0.28 + Math.random() * 0.22, r: 1 + Math.random() * 1.4, alpha: 1
+    });
   }
 }
+
 function finaleBurst(){
-  var F=BH_FINALE;
-  var pr=panel.getBoundingClientRect();
-  var names=['mO','M2O','gO','aO','vO','rO','halfO','muO','cO','GO','tO','BO','EO','qO','IO'];
-  var refs=[mO,M2O,gO,aO,vO,rO,halfO,muO,cO,GO,tO,BO,EO,qO,IO];
-  for(var i=0;i<BH_CHARS.length;i++){
-    var old=refs[i];
-    if(old&&old.el&&old.el.parentNode)old.el.parentNode.removeChild(old.el);
-    var nd=GD(BH_CHARS[i]);
-    nd.cat=1;nd.pop=0;
+  var F4 = BH_FINALE;
+  var pr = panel.getBoundingClientRect();
+  var names = ['mO', 'M2O', 'gO', 'aO', 'vO', 'rO', 'halfO', 'muO', 'cO', 'GO', 'tO', 'BO', 'EO', 'qO', 'IO'];
+  var refs = [mO, M2O, gO, aO, vO, rO, halfO, muO, cO, GO, tO, BO, EO, qO, IO];
+  for(var i = 0; i < BH_CHARS.length; i++){
+    var old = refs[i];
+    if(old && old.el && old.el.parentNode) old.el.parentNode.removeChild(old.el);
+    var nd = GD(BH_CHARS[i]);
+    nd.cat = 1; nd.pop = 0;
     switch(names[i]){
-      case 'mO':mO=nd;break;case 'M2O':M2O=nd;break;case 'gO':gO=nd;break;case 'aO':aO=nd;break;
-      case 'vO':vO=nd;break;case 'rO':rO=nd;break;case 'halfO':halfO=nd;break;case 'muO':muO=nd;break;
-      case 'cO':cO=nd;break;case 'GO':GO=nd;break;case 'tO':tO=nd;break;case 'BO':BO=nd;break;
-      case 'EO':EO=nd;break;case 'qO':qO=nd;break;case 'IO':IO=nd;break;
+      case 'mO': mO = nd; break; case 'M2O': M2O = nd; break; case 'gO': gO = nd; break; case 'aO': aO = nd; break;
+      case 'vO': vO = nd; break; case 'rO': rO = nd; break; case 'halfO': halfO = nd; break; case 'muO': muO = nd; break;
+      case 'cO': cO = nd; break; case 'GO': GO = nd; break; case 'tO': tO = nd; break; case 'BO': BO = nd; break;
+      case 'EO': EO = nd; break; case 'qO': qO = nd; break; case 'IO': IO = nd; break;
     }
-    nd.el.style.fontSize='34px';
-    nd.el.style.pointerEvents='none';
+    nd.el.style.pointerEvents = 'none';
     DD.body.appendChild(nd.el);
-    var a=Math.random()*6.2832,sp=240+Math.random()*360;
-    var tgt=finaleSlot(i,pr);
-    F.letters.push({d:nd,el:nd.el,x:F.bx||F.hx,y:F.by||F.hy,
-                    vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,tx:tgt.x,ty:tgt.y,arr:false});
-    place(nd,F.hx,F.hy,0,1,true);
+    var a = Math.random() * 6.2832, sp = 240 + Math.random() * 360;
+    var tgt = finaleSlot(i, pr);
+    F4.letters.push({
+      d: nd, el: nd.el, x: F4.bx || F4.hx, y: F4.by || F4.hy,
+      vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, tx: tgt.x, ty: tgt.y, arr: false
+    });
+    place(nd, F4.hx, F4.hy, 0, 1, true);
   }
-  burstParticles(F.hx,F.hy,24,1.5);
-  ringGo(F.hx,F.hy);
+  burstParticles(F4.hx, F4.hy, 24, 1.5);
+  ringGo(F4.hx, F4.hy);
 }
+
 function stepFinale(dt){
-  if(!BH_FINALE){maybeStartFinale();return;}
-  var F=BH_FINALE;
-  F.t+=dt;
-  if(F.ph==='pull'){
-    var e=Math.min(1,F.t/F.pullD);e=e*e;
-    var bc=trashCenter();
-    var sx=F.bl+F.bw/2,sy=F.bt+F.bhh/2;
-    var cx=sx+(F.hx-sx)*e,cy=sy+(F.hy-sy)*e;
-    trashTo(cx-F.bw/2,cy-F.bhh/2);
-    if(F.t>=F.pullD){
-      F.ph='suck';F.t=0;
+  if(!BH_FINALE){ maybeStartFinale(); return; }
+  var F5 = BH_FINALE;
+  F5.t += dt;
+  if(F5.ph === 'pull'){
+    var e = Math.min(1, F5.t / F5.pullD); e = e * e;
+    var sx = F5.bl + F5.bw / 2, sy = F5.bt + F5.bhh / 2;
+    var cx = sx + (F5.hx - sx) * e, cy = sy + (F5.hy - sy) * e;
+    trashTo(cx - F5.bw / 2, cy - F5.bhh / 2);
+    if(F5.t >= F5.pullD){ F5.ph = 'suck'; F5.t = 0; }
+  } else if(F5.ph === 'suck'){
+    var e2 = Math.min(1, F5.t / F5.suckD);
+    var h = F5.hole;
+    if(h.bh) h.bh.r = Math.max(1.5, BH_MAXR * (1 - e2));
+    if(Math.random() < 0.8) suckPuff(h.x, h.y, F5.hx, F5.hy);
+    if(F5.t >= F5.suckD){
+      var hx = h.x, hy = h.y;
+      var bi = bodies.indexOf(h); if(bi >= 0) bodies.splice(bi, 1);
+      if(h.bh){ h.bh.dead = true; }
+      F5.removed = true;
+      burstParticles(hx, hy, 20, 1.2);
+      shake(10, 0.35);
+      F5.ph = 'shake'; F5.t = 0;
     }
-  }else if(F.ph==='suck'){
-    var e2=Math.min(1,F.t/F.suckD);
-    var h=F.hole;
-    if(h.bh)h.bh.r=Math.max(1.5,BH_MAXR*(1-e2));
-    if(Math.random()<0.8)suckPuff(h.x,h.y,F.hx,F.hy);
-    if(F.t>=F.suckD){
-      var hx=h.x,hy=h.y;
-      var bi=bodies.indexOf(h);if(bi>=0)bodies.splice(bi,1);
-      if(h.bh){h.bh.dead=true;}
-      F.removed=true;
-      burstParticles(hx,hy,20,1.2);
-      shake(10,0.35);
-      F.ph='shake';F.t=0;
-    }
-  }else if(F.ph==='shake'){
-    var p=Math.min(1,F.t/F.shakeD);
-    var cyc=p*2.2,n2=Math.floor(cyc),f2=cyc-n2;
-    var amp=(1-p)*11;
-    var ox=(n2%2===0?1:-1)*Math.sin(f2*Math.PI)*amp;
-    var oy=Math.sin(f2*Math.PI*1.7)*2.4*(1-p);
-    trash.style.transform='translate('+ox.toFixed(1)+'px,'+oy.toFixed(1)+'px)';
-    if(F.t>=F.shakeD){
-      F.ph='fly';F.t=0;
-      finaleBurst();
-    }
-  }else if(F.ph==='fly'){
-    var any=false;
-    for(var i=0;i<F.letters.length;i++){
-      var L=F.letters[i];
-      if(L.arr)continue;
-      any=true;
-      L.vx+=(L.tx-L.x)*24*dt;L.vy+=(L.ty-L.y)*24*dt;
-      L.vx*=Math.pow(0.86,dt*60);L.vy*=Math.pow(0.86,dt*60);
-      var sp2=Math.hypot(L.vx,L.vy);
-      if(sp2>1500){L.vx*=1500/sp2;L.vy*=1500/sp2;}
-      L.x+=L.vx*dt;L.y+=L.vy*dt;
-      L.el.style.left=(L.x-L.el.offsetWidth/2)+'px';
-      L.el.style.top=(L.y-L.el.offsetHeight/2)+'px';
-      var d2=Math.hypot(L.tx-L.x,L.ty-L.y);
-      if(d2<4&&sp2<140){
-        L.arr=true;L.el.style.pointerEvents='';
+  } else if(F5.ph === 'shake'){
+    var p = Math.min(1, F5.t / F5.shakeD);
+    var cyc = p * 2.2, n2 = Math.floor(cyc), f2 = cyc - n2;
+    var amp = (1 - p) * 11;
+    var ox = (n2 % 2 === 0 ? 1 : -1) * Math.sin(f2 * Math.PI) * amp;
+    var oy = Math.sin(f2 * Math.PI * 1.7) * 2.4 * (1 - p);
+    trash.style.transform = 'translate(' + ox.toFixed(1) + 'px,' + oy.toFixed(1) + 'px)';
+    if(F5.t >= F5.shakeD){ F5.ph = 'fly'; F5.t = 0; finaleBurst(); }
+  } else if(F5.ph === 'fly'){
+    var any = false;
+    for(var i = 0; i < F5.letters.length; i++){
+      var L = F5.letters[i];
+      if(L.arr) continue;
+      any = true;
+      L.vx += (L.tx - L.x) * 24 * dt; L.vy += (L.ty - L.y) * 24 * dt;
+      L.vx *= Math.pow(0.86, dt * 60); L.vy *= Math.pow(0.86, dt * 60);
+      var sp2 = Math.hypot(L.vx, L.vy);
+      if(sp2 > 1500){ L.vx *= 1500 / sp2; L.vy *= 1500 / sp2; }
+      L.x += L.vx * dt; L.y += L.vy * dt;
+      L.el.style.left = (L.x - L.el.offsetWidth / 2) + 'px';
+      L.el.style.top = (L.y - L.el.offsetHeight / 2) + 'px';
+      var d2 = Math.hypot(L.tx - L.x, L.ty - L.y);
+      if(d2 < 5 && sp2 < 140){
+        L.arr = true; L.el.style.pointerEvents = '';
         dockLetter(L.d);
       }
     }
-    var e4=Math.min(1,F.t/1.1);
-    var sc=trashCenter();
-    var hx0=F.hx,hy0=F.hy;
-    var hcx=F.bl+F.bw/2,hcy=F.bt+F.bhh/2;
-    var cx2=hx0+(hcx-hx0)*e4,cy2=hy0+(hcy-hy0)*e4;
-    trashTo(cx2-F.bw/2,cy2-F.bhh/2);
-    var arrN=0;for(var k=0;k<F.letters.length;k++)if(F.letters[k].arr)arrN++;
-    if(!any&&arrN===F.letters.length||F.t>4.5){
-      for(var m2=0;m2<F.letters.length;m2++){
-        var L2=F.letters[m2];
-        if(!L2.arr){L2.arr=true;L2.el.style.pointerEvents='';dockLetter(L2.d);}
+    var e4 = Math.min(1, F5.t / 1.1);
+    var hx0 = F5.hx, hy0 = F5.hy;
+    var hcx = F5.bl + F5.bw / 2, hcy = F5.bt + F5.bhh / 2;
+    var cx2 = hx0 + (hcx - hx0) * e4, cy2 = hy0 + (hcy - hy0) * e4;
+    trashTo(cx2 - F5.bw / 2, cy2 - F5.bhh / 2);
+    var arrN = 0; for(var k = 0; k < F5.letters.length; k++) if(F5.letters[k].arr) arrN++;
+    if(!any && arrN === F5.letters.length || F5.t > 4.5){
+      for(var m2 = 0; m2 < F5.letters.length; m2++){
+        var L2 = F5.letters[m2];
+        if(!L2.arr){ L2.arr = true; L2.el.style.pointerEvents = ''; dockLetter(L2.d); }
       }
       resetTrashPos();
-      BH_FINALE=null;
-      return;
+      BH_FINALE = null;
     }
   }
 }
-function annihBody(O,idx){
-  var cx=O.x,cy=O.y;
-  burstParticles(cx,cy,22,1.2);
-  ringGo(cx,cy);
-  var i=bodies.indexOf(O);if(i>=0)bodies.splice(i,1);
-  if(O.go){var gD=O.go;if(gD.bin){var P2=gD.by;if(P2&&bodies.indexOf(P2)>=0){P2.vx=-Math.sin(gD.ang)*gD.w*gD.rad*gD.rP;P2.vy=Math.cos(gD.ang)*gD.w*gD.rad*gD.rP;P2.goB=null;}}O.go=null;}
-  if(O.goB&&bodies.indexOf(O.goB)>=0){var H2=O.goB,gH2=H2.go;if(gH2){H2.vx=-Math.sin(gH2.ang)*gH2.w*gH2.rad*gH2.rB;H2.vy=Math.cos(gH2.ang)*gH2.w*gH2.rad*gH2.rB;H2.go=null;}O.goB.goB=null;}
-  O.diss=true;
-  for(var j=0;j<O.glyphs.length;j++){
-    var g=O.glyphs[j];
-    if(g.body===O){g.body=null;g.inBody=false;killLetter(g);}
+
+function annihBody(O, idx){
+  var cx = O.x, cy = O.y;
+  burstParticles(cx, cy, 22, 1.2);
+  ringGo(cx, cy);
+  var i = bodies.indexOf(O); if(i >= 0) bodies.splice(i, 1);
+  if(O.go){ var gD = O.go; if(gD.bin){ var P2 = gD.by; if(P2 && bodies.indexOf(P2) >= 0){ P2.vx = -Math.sin(gD.ang) * gD.w * gD.rad * gD.rP; P2.vy = Math.cos(gD.ang) * gD.w * gD.rad * gD.rP; P2.goB = null; } } O.go = null; }
+  if(O.goB && bodies.indexOf(O.goB) >= 0){ var H2 = O.goB, gH2 = H2.go; if(gH2){ H2.vx = -Math.sin(gH2.ang) * gH2.w * gH2.rad * gH2.rB; H2.vy = Math.cos(gH2.ang) * gH2.w * gH2.rad * gH2.rB; H2.go = null; } O.goB.goB = null; }
+  O.diss = true;
+  for(var j = 0; j < O.glyphs.length; j++){
+    var g = O.glyphs[j];
+    if(g.body === O){ g.body = null; g.inBody = false; killLetter(g); }
   }
-  O.glyphs=[];O.mem=[];
+  O.glyphs = []; O.mem = [];
 }
-function burstParticles(cx,cy,n,sp){
-  for(var i=0;i<n;i++){
-    var ang=Math.random()*6.2832;
-    var v=140+Math.random()*320*sp;
-    particles.push({x:cx+(Math.random()*16-8),y:cy+(Math.random()*16-8),vx:Math.cos(ang)*v,vy:Math.sin(ang)*v,age:0,life:0.7+Math.random()*0.8,r:1.2+Math.random()*2.2,alpha:1});
+
+function burstParticles(cx, cy, n, sp){
+  for(var i = 0; i < n; i++){
+    var ang = Math.random() * 6.2832;
+    var v = 140 + Math.random() * 300 * sp;
+    particles.push({ x: cx + (Math.random() * 16 - 8), y: cy + (Math.random() * 16 - 8), vx: Math.cos(ang) * v, vy: Math.sin(ang) * v, age: 0, life: 0.7 + Math.random() * 0.7, r: 1.2 + Math.random() * 2, alpha: 1 });
   }
 }
-function killFieldBody(O,idx){
-  burstParticles(O.x,O.y,16,1.1);
-  ringGo(O.x,O.y);
+
+function killFieldBody(O, idx){
+  burstParticles(O.x, O.y, 16, 1.1);
+  ringGo(O.x, O.y);
   killBody(O);
 }
-var BLAST_R=500;
+
+var BLAST_R = 400;
+
 function explodeBlackHole(B){
-  var cx=B.x,cy=B.y;
-  var i=bodies.indexOf(B);if(i>=0)bodies.splice(i,1);
-  if(B.bh)B.bh.dead=true;
-  B.diss=true;
-  B.glyphs.slice().forEach(function(g){if(g.body===B){g.body=null;g.inBody=false;killLetter(g);}});
-  B.glyphs=[];B.mem=[];
-  spawnExplosion(cx,cy);
-  for(var w=0;w<120;w++){
-    var wa=Math.random()*6.2832,ws=200+Math.random()*900;
-    particles.push({x:cx,y:cy,vx:Math.cos(wa)*ws,vy:Math.sin(wa)*ws,age:0,life:0.5+Math.random()*0.7,r:1+Math.random()*2,alpha:1,hot:true});
+  var cx = B.x, cy = B.y;
+  var i = bodies.indexOf(B); if(i >= 0) bodies.splice(i, 1);
+  if(B.bh) B.bh.dead = true;
+  B.diss = true;
+  B.glyphs.slice().forEach(function(g){ if(g.body === B){ g.body = null; g.inBody = false; killLetter(g); } });
+  B.glyphs = []; B.mem = [];
+  spawnExplosion(cx, cy);
+  for(var w = 0; w < 100; w++){
+    var wa = Math.random() * 6.2832, ws = 200 + Math.random() * 800;
+    particles.push({ x: cx, y: cy, vx: Math.cos(wa) * ws, vy: Math.sin(wa) * ws, age: 0, life: 0.5 + Math.random() * 0.6, r: 1 + Math.random() * 1.8, alpha: 1, hot: true });
   }
-  shake(22,0.8);
-  blastAt(cx,cy,BLAST_R);
+  shake(20, 0.7);
+  blastAt(cx, cy, BLAST_R);
 }
+
 function drawParticles(){
-  for(var i=0;i<particles.length;i++){
-    var p=particles[i];
-    cvx.fillStyle=p.hot?('rgba(255,224,150,'+p.alpha+')'):('rgba(38,34,28,'+p.alpha+')');
-    cvx.beginPath();cvx.arc(p.x,p.y,p.r,0,6.2832);cvx.fill();
+  for(var i = 0; i < particles.length; i++){
+    var p = particles[i];
+    cvx.fillStyle = p.hot ? ('rgba(255,224,150,' + p.alpha + ')') : ('rgba(38,34,28,' + p.alpha + ')');
+    cvx.beginPath(); cvx.arc(p.x, p.y, p.r, 0, 6.2832); cvx.fill();
   }
 }
-function drawFieldDots(cx,cy,R){
-  cvx.fillStyle='rgba(38,34,28,0.16)';
-  var sp=26;
-  for(var gx=-R;gx<=R;gx+=sp){
-    for(var gy=-R;gy<=R;gy+=sp){
-      if(gx*gx+gy*gy<=R*R){
-        cvx.beginPath();
-        cvx.arc(cx+gx,cy+gy,1.7,0,6.2832);
-        cvx.fill();
+
+function drawFieldDots(cx, cy, R){
+  cvx.fillStyle = 'rgba(38,34,28,0.16)';
+  var sp = 26;
+  for(var gx = -R; gx <= R; gx += sp){
+    for(var gy = -R; gy <= R; gy += sp){
+      if(gx * gx + gy * gy <= R * R){
+        cvx.beginPath(); cvx.arc(cx + gx, cy + gy, 1.7, 0, 6.2832); cvx.fill();
       }
     }
   }
-  cvx.strokeStyle='rgba(38,34,28,0.10)';
-  cvx.lineWidth=1;
-  cvx.beginPath();
-  cvx.arc(cx,cy,R,0,6.2832);
-  cvx.stroke();
+  cvx.strokeStyle = 'rgba(38,34,28,0.10)';
+  cvx.lineWidth = 1;
+  cvx.beginPath(); cvx.arc(cx, cy, R, 0, 6.2832); cvx.stroke();
 }
-function drawFieldE(cx,cy,R,th){
-  var hs=R/2;
-  var dx=Math.cos(th),dy=Math.sin(th);
-  var px=-dy,py=dx;
-  var n=9,margin=3,al=11;
-  var ah=Math.atan2(dy,dx);
-  cvx.strokeStyle='rgba(38,34,28,0.18)';
-  cvx.fillStyle='rgba(38,34,28,0.18)';
-  cvx.lineWidth=1.4;cvx.lineCap='round';
-  for(var i=0;i<n;i++){
-    var off=(i-(n-1)/2)*(2*hs/n);
-    var ox=cx+px*off,oy=cy+py*off;
-    var t0=-1e9,t1=1e9,okk=true;
-    if(Math.abs(dx)>1e-6){
-      var a1=(-hs-(ox-cx))/dx,a2=(hs-(ox-cx))/dx;
-      t0=Math.max(t0,Math.min(a1,a2));t1=Math.min(t1,Math.max(a1,a2));
-    }else if(Math.abs(ox-cx)>hs)okk=false;
+
+function drawFieldE(cx, cy, R, th){
+  var hs = R / 2;
+  var dx = Math.cos(th), dy = Math.sin(th);
+  var px = -dy, py = dx;
+  var n = 7, margin = 3, al = 10;
+  var ah = Math.atan2(dy, dx);
+  cvx.strokeStyle = 'rgba(38,34,28,0.18)';
+  cvx.fillStyle = 'rgba(38,34,28,0.18)';
+  cvx.lineWidth = 1.4; cvx.lineCap = 'round';
+  for(var i = 0; i < n; i++){
+    var off = (i - (n - 1) / 2) * (2 * hs / n);
+    var ox = cx + px * off, oy = cy + py * off;
+    var t0 = -1e9, t1 = 1e9, okk = true;
+    if(Math.abs(dx) > 1e-6){
+      var a1 = (-hs - (ox - cx)) / dx, a2 = (hs - (ox - cx)) / dx;
+      t0 = Math.max(t0, Math.min(a1, a2)); t1 = Math.min(t1, Math.max(a1, a2));
+    } else if(Math.abs(ox - cx) > hs) okk = false;
     if(okk){
-      if(Math.abs(dy)>1e-6){
-        var b1=(-hs-(oy-cy))/dy,b2=(hs-(oy-cy))/dy;
-        t0=Math.max(t0,Math.min(b1,b2));t1=Math.min(t1,Math.max(b1,b2));
-      }else if(Math.abs(oy-cy)>hs)okk=false;
+      if(Math.abs(dy) > 1e-6){
+        var b1 = (-hs - (oy - cy)) / dy, b2 = (hs - (oy - cy)) / dy;
+        t0 = Math.max(t0, Math.min(b1, b2)); t1 = Math.min(t1, Math.max(b1, b2));
+      } else if(Math.abs(oy - cy) > hs) okk = false;
     }
-    if(!okk||t1-t0<26)continue;
-    var ax=ox+dx*(t0+margin),ay=oy+dy*(t0+margin);
-    var bx=ox+dx*(t1-margin),by=oy+dy*(t1-margin);
-    cvx.beginPath();cvx.moveTo(ax,ay);cvx.lineTo(bx,by);cvx.stroke();
+    if(!okk || t1 - t0 < 26) continue;
+    var ax = ox + dx * (t0 + margin), ay = oy + dy * (t0 + margin);
+    var bx = ox + dx * (t1 - margin), by = oy + dy * (t1 - margin);
+    cvx.beginPath(); cvx.moveTo(ax, ay); cvx.lineTo(bx, by); cvx.stroke();
     cvx.beginPath();
-    cvx.moveTo(bx,by);
-    cvx.lineTo(bx-al*Math.cos(ah-0.42),by-al*Math.sin(ah-0.42));
-    cvx.lineTo(bx-al*Math.cos(ah+0.42),by-al*Math.sin(ah+0.42));
-    cvx.closePath();cvx.fill();
+    cvx.moveTo(bx, by);
+    cvx.lineTo(bx - al * Math.cos(ah - 0.42), by - al * Math.sin(ah - 0.42));
+    cvx.lineTo(bx - al * Math.cos(ah + 0.42), by - al * Math.sin(ah + 0.42));
+    cvx.closePath(); cvx.fill();
   }
-  cvx.strokeStyle='rgba(38,34,28,0.12)';
-  cvx.lineWidth=1.2;
-  cvx.setLineDash([7,6]);
-  cvx.strokeRect(cx-hs,cy-hs,hs*2,hs*2);
+  cvx.strokeStyle = 'rgba(38,34,28,0.12)';
+  cvx.lineWidth = 1.2;
+  cvx.setLineDash([7, 6]);
+  cvx.strokeRect(cx - hs, cy - hs, hs * 2, hs * 2);
   cvx.setLineDash([]);
 }
+
 function stepShake(dt){
-  if(!shakeOn)return;
-  shakeT+=dt;
-  var k=clamp(1-shakeT/shakeDur,0,1);
-  var a=shakeAmp*k;
-  var dx=(Math.random()*2-1)*a;
-  var dy=(Math.random()*2-1)*a;
-  document.body.style.transform='translate('+dx+'px,'+dy+'px)';
-  if(shakeT>=shakeDur){document.body.style.transform='';shakeOn=false;shakeAmp=0;shakeDur=0;}
+  if(!shakeOn) return;
+  shakeT += dt;
+  var k = clamp(1 - shakeT / shakeDur, 0, 1);
+  var a = shakeAmp * k;
+  var dx = (Math.random() * 2 - 1) * a;
+  var dy = (Math.random() * 2 - 1) * a;
+  document.body.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+  if(shakeT >= shakeDur){ document.body.style.transform = ''; shakeOn = false; shakeAmp = 0; shakeDur = 0; }
 }
+
 function resize(){
-  W=window.innerWidth;H=window.innerHeight;
-  groundY=Math.round(H*0.8);
-  BH_REACH=Math.hypot(W,groundY)+240;
-  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
-  cv.style.width=W+'px';cv.style.height=H+'px';
-  cvx.setTransform(dpr,0,0,dpr,0,0);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  groundY = Math.round(H * 0.8);
+  BH_REACH = Math.hypot(W, groundY) + 160;
+  cv.width = Math.round(W * dpr);
+  cv.height = Math.round(H * dpr);
+  cv.style.width = W + 'px';
+  cv.style.height = H + 'px';
+  cvx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
+
 function eOut(x){
-  x=clamp(x,0,1);
-  var c1=1.70158,c3=c1+1;
-  return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);
+  x = clamp(x, 0, 1);
+  var c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 }
-function cubE(x){
-  x=clamp(x,0,1);
-  return 1-Math.pow(1-x,3);
-}
+function cubE(x){ return 1 - Math.pow(1 - clamp(x, 0, 1), 3); }
 function popScale(p){
-  var x=1-clamp(p,0,1);
-  var c1=1.70158,c3=c1+1;
-  var v=1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);
-  return 0.25+0.75*v;
+  var x = 1 - clamp(p, 0, 1);
+  var c1 = 1.70158, c3 = c1 + 1;
+  return 0.25 + 0.75 * (1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2));
 }
-function arrow(B,gx,gy,Cx,Cy,ddn){
-  var dx=Cx-gx,dy=Cy-gy;
-  var L=Math.hypot(dx,dy);
-  if(L<26)return;
-  var ux=dx/L,uy=dy/L;
-  var al=0.3+0.45*ddn;
-  var hl=11;
-  var sl=Math.min(Math.max((B.hw||60)+4,10),L-hl-2);
-  var a0=gx+ux*sl,b0=gy+uy*sl;
-  var bx=Cx-ux*hl,by=Cy-uy*hl;
-  cvx.strokeStyle='rgba(38,34,28,'+al+')';
-  cvx.lineWidth=2;
-  cvx.lineCap='round';
+
+function arrow(B, gx, gy, Cx, Cy, ddn){
+  var dx = Cx - gx, dy = Cy - gy;
+  var L = Math.hypot(dx, dy);
+  if(L < 26) return;
+  var ux = dx / L, uy = dy / L;
+  var al = 0.3 + 0.45 * ddn;
+  var hl = 10;
+  var sl = Math.min(Math.max((B.hw || 60) + 4, 10), L - hl - 2);
+  var a0 = gx + ux * sl, b0 = gy + uy * sl;
+  var bx = Cx - ux * hl, by = Cy - uy * hl;
+  cvx.strokeStyle = 'rgba(38,34,28,' + al + ')';
+  cvx.lineWidth = 1.8; cvx.lineCap = 'round';
+  cvx.beginPath(); cvx.moveTo(a0, b0); cvx.lineTo(bx, by); cvx.stroke();
+  cvx.fillStyle = 'rgba(38,34,28,' + al + ')';
   cvx.beginPath();
-  cvx.moveTo(a0,b0);
-  cvx.lineTo(bx,by);
-  cvx.stroke();
-  cvx.fillStyle='rgba(38,34,28,'+al+')';
-  cvx.beginPath();
-  cvx.moveTo(Cx,Cy);
-  cvx.lineTo(bx-uy*5.5,by+ux*5.5);
-  cvx.lineTo(bx+uy*5.5,by-ux*5.5);
-  cvx.closePath();
-  cvx.fill();
+  cvx.moveTo(Cx, Cy);
+  cvx.lineTo(bx - uy * 5, by + ux * 5);
+  cvx.lineTo(bx + uy * 5, by - ux * 5);
+  cvx.closePath(); cvx.fill();
 }
+
 function orbGeom(B){
-  var o=B.orb;
-  if(!o||o.k<0.02)return;
-  var R=o.R||120;
-  var Cx=B.x, Cy=B.y-R;
-  var Rk=R*Math.max(o.k,0.001);
-  var n=72,i;
-  var pts=[];
-  for(i=0;i<n;i++){
-    var b=i/n*6.2832;
-    pts.push([Cx+Rk*Math.cos(b),Cy+Rk*Math.sin(b)]);
+  var o = B.orb;
+  if(!o || o.k < 0.02) return;
+  var R = o.R || 100;
+  var Cx = B.x, Cy = B.y - R;
+  var Rk = R * Math.max(o.k, 0.001);
+  var n = 64, i;
+  var pts = [];
+  for(i = 0; i < n; i++){
+    var b = i / n * 6.2832;
+    pts.push([Cx + Rk * Math.cos(b), Cy + Rk * Math.sin(b)]);
   }
-  cvx.strokeStyle='rgba(38,34,28,'+(0.45*Math.max(o.e,0.001))+')';
-  cvx.lineWidth=1.6;
-  cvx.setLineDash([7,6]);
+  cvx.strokeStyle = 'rgba(38,34,28,' + (0.45 * Math.max(o.e, 0.001)) + ')';
+  cvx.lineWidth = 1.5;
+  cvx.setLineDash([7, 6]);
   cvx.beginPath();
-  for(i=0;i<n;i++){
-    if(i)cvx.lineTo(pts[i][0],pts[i][1]);else cvx.moveTo(pts[i][0],pts[i][1]);
+  for(i = 0; i < n; i++){
+    if(i) cvx.lineTo(pts[i][0], pts[i][1]); else cvx.moveTo(pts[i][0], pts[i][1]);
   }
-  cvx.closePath();
-  cvx.stroke();
+  cvx.closePath(); cvx.stroke();
   cvx.setLineDash([]);
-  arrow(B,o.gx!=null?o.gx:B.x,o.gy!=null?o.gy:B.y,Cx,Cy,1);
+  arrow(B, o.gx != null ? o.gx : B.x, o.gy != null ? o.gy : B.y, Cx, Cy, 1);
 }
+
 function tickOrbs(dt){
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(B.pop&&B.pop>0)B.pop=Math.max(0,B.pop-dt*3.2);
-    var o=B.orb;
-    if(!o)continue;
-    o.age+=dt;
-    o.k=eOut(Math.min(o.age/0.55,1));
-    o.e=cubE((o.age-0.18)/0.55);
-    var R=o.R||120;
-    var Rk=R*Math.max(o.k,0.001);
-    if(!(grab.kind==='body'&&grab.obj===B))o.spin+=dt*0.8;
-    o.gx=B.x+Rk*Math.cos(o.spin);
-    o.gy=B.y-R+Rk*Math.sin(o.spin);
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(B.pop && B.pop > 0) B.pop = Math.max(0, B.pop - dt * 3.2);
+    var o = B.orb;
+    if(!o) continue;
+    o.age += dt;
+    o.k = eOut(Math.min(o.age / 0.55, 1));
+    o.e = cubE((o.age - 0.18) / 0.55);
+    var R = o.R || 100;
+    var Rk = R * Math.max(o.k, 0.001);
+    if(!(grab.kind === 'body' && grab.obj === B)) o.spin += dt * 0.8;
+    o.gx = B.x + Rk * Math.cos(o.spin);
+    o.gy = B.y - R + Rk * Math.sin(o.spin);
   }
 }
+
 function render(){
-  cvx.clearRect(0,0,W,H);
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(B.frac&&B.st.bar&&!B.st.bar.dead){
-      var ob=B.orb,oxB=(ob&&ob.k>=0.02&&ob.gx!=null)?(ob.gx-B.x):0,oyB=(ob&&ob.k>=0.02&&ob.gy!=null)?(ob.gy-B.y):0;
-      var b=B.st.bar,th=B.th||0,sc=B.sc||1,ct=Math.cos(th),st=Math.sin(th);
-      var s=slot(B,b);
-      var hw=(b.w/2)*sc;
-      cvx.strokeStyle='rgba(38,34,28,0.85)';
-      cvx.lineWidth=1.6;cvx.lineCap='round';
+  cvx.clearRect(0, 0, W, H);
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(B.frac && B.st.bar && !B.st.bar.dead){
+      var ob = B.orb, oxB = (ob && ob.k >= 0.02 && ob.gx != null) ? (ob.gx - B.x) : 0, oyB = (ob && ob.k >= 0.02 && ob.gy != null) ? (ob.gy - B.y) : 0;
+      var b = B.st.bar, th = B.th || 0, sc = B.sc || 1, ct = Math.cos(th), st = Math.sin(th);
+      var s = slot(B, b);
+      var hw = (b.w / 2) * sc;
+      cvx.strokeStyle = 'rgba(38,34,28,0.85)';
+      cvx.lineWidth = 1.6; cvx.lineCap = 'round';
       cvx.beginPath();
-      cvx.moveTo(s.x+oxB-Math.cos(th)*hw,s.y+oyB-Math.sin(th)*hw);
-      cvx.lineTo(s.x+oxB+Math.cos(th)*hw,s.y+oyB+Math.sin(th)*hw);
+      cvx.moveTo(s.x + oxB - Math.cos(th) * hw, s.y + oyB - Math.sin(th) * hw);
+      cvx.lineTo(s.x + oxB + Math.cos(th) * hw, s.y + oyB + Math.sin(th) * hw);
       cvx.stroke();
       if(B.subBar){
-        var sb=B.subBar,shw=(sb.w/2)*sc;
-        var spx=B.x+oxB+(-sb.y*st)*sc,spy=B.y+oyB+(sb.y*ct)*sc;
+        var sb = B.subBar, shw = (sb.w / 2) * sc;
+        var spx = B.x + oxB + (-sb.y * st) * sc, spy = B.y + oyB + (sb.y * ct) * sc;
         cvx.beginPath();
-        cvx.moveTo(spx-Math.cos(th)*shw,spy-Math.sin(th)*shw);
-        cvx.lineTo(spx+Math.cos(th)*shw,spy+Math.sin(th)*shw);
+        cvx.moveTo(spx - Math.cos(th) * shw, spy - Math.sin(th) * shw);
+        cvx.lineTo(spx + Math.cos(th) * shw, spy + Math.sin(th) * shw);
         cvx.stroke();
       }
     }
   }
-  for(var q=0;q<bodies.length;q++){
-    var B2=bodies[q];
-    if(B2.orb)orbGeom(B2);
+  for(var q = 0; q < bodies.length; q++){
+    var B2 = bodies[q];
+    if(B2.orb) orbGeom(B2);
   }
-  for(var gv=0;gv<bodies.length;gv++){
-    var GV=bodies[gv];
-    if(GV.kind||!GV.isWell)continue;
-    cvx.strokeStyle='rgba(120,80,30,0.38)';
-    cvx.lineWidth=1.5;
-    cvx.setLineDash([9,7]);
+  for(var gv = 0; gv < bodies.length; gv++){
+    var GV = bodies[gv];
+    if(GV.kind || !GV.isWell) continue;
+    cvx.strokeStyle = 'rgba(120,80,30,0.38)';
+    cvx.lineWidth = 1.5;
+    cvx.setLineDash([9, 7]);
     cvx.beginPath();
-    cvx.arc(GV.x,GV.y,G_RANGE,0,6.2832);
+    cvx.arc(GV.x, GV.y, G_RANGE, 0, 6.2832);
     cvx.stroke();
     cvx.setLineDash([]);
   }
-  for(var tr=0;tr<bodies.length;tr++){
-    var TB=bodies[tr];
-    if(TB.kind!=='T')continue;
-    var tht=TB.th||0,cth=Math.cos(tht),sth=Math.sin(tht),hl=TB.len/2;
-    var x1=TB.x-cth*hl,y1=TB.y-sth*hl,x2=TB.x+cth*hl,y2=TB.y+sth*hl;
-    cvx.strokeStyle='rgba(38,34,28,0.85)';
-    cvx.lineWidth=3;
-    cvx.lineCap='round';
-    cvx.beginPath();cvx.moveTo(x1,y1);cvx.lineTo(x2,y2);cvx.stroke();
+  for(var tr = 0; tr < bodies.length; tr++){
+    var TB = bodies[tr];
+    if(TB.kind !== 'T') continue;
+    var tht = TB.th || 0, cth = Math.cos(tht), sth = Math.sin(tht), hl = TB.len / 2;
+    var x1 = TB.x - cth * hl, y1 = TB.y - sth * hl, x2 = TB.x + cth * hl, y2 = TB.y + sth * hl;
+    cvx.strokeStyle = 'rgba(38,34,28,0.85)';
+    cvx.lineWidth = 3; cvx.lineCap = 'round';
+    cvx.beginPath(); cvx.moveTo(x1, y1); cvx.lineTo(x2, y2); cvx.stroke();
   }
-  for(var fb=0;fb<bodies.length;fb++){
-    var FB=bodies[fb];
-    if(FB.kind==='B')drawFieldDots(FB.x,FB.y,FB.fieldR);
-    else if(FB.kind==='E')drawFieldE(FB.x,FB.y,FB.fieldR,FB.th||0);
+  for(var fb = 0; fb < bodies.length; fb++){
+    var FB = bodies[fb];
+    if(FB.kind === 'B') drawFieldDots(FB.x, FB.y, FB.fieldR);
+    else if(FB.kind === 'E') drawFieldE(FB.x, FB.y, FB.fieldR, FB.th || 0);
   }
-  for(var qo=0;qo<bodies.length;qo++){
-    var OB=bodies[qo];
-    if(OB.kind==='q'&&OB.fieldState){
-    }else if(OB.kind==='I'){
-      var s2=null,bd2=1e9;
-      for(var ss=0;ss<bodies.length;ss++){
-        var S3=bodies[ss];
-        if(S3.kind!=='B')continue;
-        var d2=Math.hypot(OB.x-S3.x,OB.y-S3.y);
-        if(d2<=S3.fieldR&&d2<bd2){bd2=d2;s2=S3;}
+  for(var qo = 0; qo < bodies.length; qo++){
+    var OB = bodies[qo];
+    if(OB.kind === 'I'){
+      var s3 = null, bd2 = 1e9;
+      for(var ss = 0; ss < bodies.length; ss++){
+        var S4 = bodies[ss];
+        if(S4.kind !== 'B') continue;
+        var d2 = Math.hypot(OB.x - S4.x, OB.y - S4.y);
+        if(d2 <= S4.fieldR && d2 < bd2){ bd2 = d2; s3 = S4; }
       }
-      if(s2){
-        var dir2=s2.Bz>0?1:-1;
-        var fy2=Math.sign(A_FORCE*OB.Isign*dir2);
-        arrow(OB,OB.x,OB.y,OB.x,OB.y+fy2*36,0.6);
+      if(s3){
+        var dir2 = s3.Bz > 0 ? 1 : -1;
+        var fy2 = Math.sign(A_FORCE * OB.Isign * dir2);
+        arrow(OB, OB.x, OB.y, OB.x, OB.y + fy2 * 36, 0.6);
       }
     }
   }
-  for(var fi=0;fi<formulas.length;fi++){
-    var F=formulas[fi];
-    if(!F.bar)continue;
-    var fsc=F.sc||1;
-    cvx.strokeStyle='rgba(38,34,28,'+(0.85*F.alpha)+')';
-    cvx.lineWidth=1.8;
-    cvx.lineCap='round';
+  for(var fi = 0; fi < formulas.length; fi++){
+    var F4 = formulas[fi];
+    if(!F4.bar) continue;
+    var fsc = F4.sc || 1;
+    cvx.strokeStyle = 'rgba(38,34,28,' + (0.85 * F4.alpha) + ')';
+    cvx.lineWidth = 1.8; cvx.lineCap = 'round';
     cvx.beginPath();
-    cvx.moveTo(F.x+F.bar.x1*fsc,F.y+F.bar.y*fsc);
-    cvx.lineTo(F.x+F.bar.x2*fsc,F.y+F.bar.y*fsc);
+    cvx.moveTo(F4.x + F4.bar.x1 * fsc, F4.y + F4.bar.y * fsc);
+    cvx.lineTo(F4.x + F4.bar.x2 * fsc, F4.y + F4.bar.y * fsc);
     cvx.stroke();
   }
-  for(var bhv=0;bhv<bodies.length;bhv++){
-    var HB=bodies[bhv];
-    if(HB.bh){
-      drawBlackHole(HB);
-    }
+  for(var bhv = 0; bhv < bodies.length; bhv++){
+    var HB = bodies[bhv];
+    if(HB.bh) drawBlackHole(HB);
   }
   drawParticles();
 }
+
 function drawBlackHole(B){
-  var bh=B.bh,cx=B.x,cy=B.y;
-  var r=Math.max(4,bh.r);
-  var rings=5;
-  for(var li=0;li<rings;li++){
-    var lr=r*1.15+li*13+Math.sin(bh.spin*1.4+li*1.9)*3;
-    var wob=1+0.10*Math.sin(bh.spin*2.1+li*2.4);
-    cvx.strokeStyle='rgba(38,34,28,'+(0.30-li*0.045)+')';
-    cvx.lineWidth=1.6-li*0.18;
+  var bh = B.bh, cx = B.x, cy = B.y;
+  var r = Math.max(4, bh.r);
+  var rings = 4;
+  for(var li = 0; li < rings; li++){
+    var lr = r * 1.15 + li * 12 + Math.sin(bh.spin * 1.4 + li * 1.9) * 3;
+    var wob = 1 + 0.10 * Math.sin(bh.spin * 2.1 + li * 2.4);
+    cvx.strokeStyle = 'rgba(38,34,28,' + (0.28 - li * 0.05) + ')';
+    cvx.lineWidth = 1.5 - li * 0.18;
     cvx.beginPath();
-    var N=26;
-    for(var n=0;n<=N;n++){
-      var a=n/N*6.2832;
-      var rr=lr*(wob+(0.05*Math.sin(3*a+bh.spin*1.7))*li*0.4);
-      var xx=cx+Math.cos(a)*rr;
-      var yy=cy+Math.sin(a)*rr*(0.92+0.06*Math.sin(2*a+bh.spin));
-      if(n===0)cvx.moveTo(xx,yy);else cvx.lineTo(xx,yy);
+    var N = 24;
+    for(var n = 0; n <= N; n++){
+      var a = n / N * 6.2832;
+      var rr = lr * (wob + (0.05 * Math.sin(3 * a + bh.spin * 1.7)) * li * 0.4);
+      var xx = cx + Math.cos(a) * rr;
+      var yy = cy + Math.sin(a) * rr * (0.92 + 0.06 * Math.sin(2 * a + bh.spin));
+      if(n === 0) cvx.moveTo(xx, yy); else cvx.lineTo(xx, yy);
     }
     cvx.stroke();
   }
-  cvx.strokeStyle='rgba(38,34,28,0.22)';
-  cvx.lineWidth=1.2;
-  for(var s2=0;s2<8;s2++){
-    var sa=bh.spin*0.9+s2*0.7854;
-    var sr=r*1.3+(s2%3)*10;
+  for(var ai = 0; ai < 3; ai++){
+    var ar = r + 4 + ai * 4;
+    cvx.strokeStyle = 'rgba(38,34,28,' + (0.55 - ai * 0.13) + ')';
+    cvx.lineWidth = 3.2 - ai * 0.9;
     cvx.beginPath();
-    cvx.arc(cx,cy,sr,sa,sa+0.9);
+    cvx.arc(cx, cy, ar, bh.spin * 2 + ai * 0.5, bh.spin * 2 + ai * 0.5 + 4.6 - ai * 1.1);
     cvx.stroke();
   }
-  for(var ai=0;ai<3;ai++){
-    var ar=r+4+ai*4;
-    cvx.strokeStyle='rgba(38,34,28,'+(0.55-ai*0.13)+')';
-    cvx.lineWidth=3.4-ai*0.9;
-    cvx.beginPath();
-    cvx.arc(cx,cy,ar,bh.spin*2+ai*0.5,bh.spin*2+ai*0.5+4.6-ai*1.1);
-    cvx.stroke();
-  }
-  var grd=cvx.createRadialGradient(cx,cy,r*0.2,cx,cy,r*1.05);
-  grd.addColorStop(0,'rgba(0,0,0,1)');
-  grd.addColorStop(0.78,'rgba(12,10,14,0.96)');
-  grd.addColorStop(1,'rgba(20,18,22,0)');
-  cvx.fillStyle=grd;
-  cvx.beginPath();
-  cvx.arc(cx,cy,r*1.05,0,6.2832);
-  cvx.fill();
-  cvx.strokeStyle='rgba(38,34,28,0.75)';
-  cvx.lineWidth=1.4;
-  cvx.beginPath();
-  cvx.arc(cx,cy,r+1,0,6.2832);
-  cvx.stroke();
+  var grd = cvx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 1.05);
+  grd.addColorStop(0, 'rgba(0,0,0,1)');
+  grd.addColorStop(0.78, 'rgba(12,10,14,0.96)');
+  grd.addColorStop(1, 'rgba(20,18,22,0)');
+  cvx.fillStyle = grd;
+  cvx.beginPath(); cvx.arc(cx, cy, r * 1.05, 0, 6.2832); cvx.fill();
+  cvx.strokeStyle = 'rgba(38,34,28,0.75)';
+  cvx.lineWidth = 1.4;
+  cvx.beginPath(); cvx.arc(cx, cy, r + 1, 0, 6.2832); cvx.stroke();
 }
+
 function syncGlyphs(){
-  var i,j,k;
-  for(i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    var bar=B.st.bar;
-    if(bar&&!bar.dead)bar.el.style.display='none';
-    var extra=(B.pop&&B.pop>0)?popScale(B.pop):1;
-    var sc2=extra*(B.sc||1)*(B.infl||1);
-    var th2=(B.th||0)+(B.wob||0);
-    var ox=0,oy=0;
-    if(B.orb&&B.orb.k>=0.02&&B.orb.gx!=null){ox=B.orb.gx-B.x;oy=B.orb.gy-B.y;}
-    for(j=0;j<B.glyphs.length;j++){
-      var g2=B.glyphs[j];
-      if(g2.dead||g2.type===BAR)continue;
-      var s2=slot(B,g2);
-      place(g2,s2.x+ox,s2.y+oy,th2,sc2,true);
-      g2.el.style.opacity=(B.bh&&B.bh.fade!=null)?B.bh.fade:(B.bhFade!=null?B.bhFade:'');
+  var i, j, k;
+  for(i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    var bar = B.st.bar;
+    if(bar && !bar.dead) bar.el.style.display = 'none';
+    var extra = (B.pop && B.pop > 0) ? popScale(B.pop) : 1;
+    var sc2 = extra * (B.sc || 1) * (B.infl || 1);
+    var th2 = (B.th || 0) + (B.wob || 0);
+    var ox = 0, oy = 0;
+    if(B.orb && B.orb.k >= 0.02 && B.orb.gx != null){ ox = B.orb.gx - B.x; oy = B.orb.gy - B.y; }
+    for(j = 0; j < B.glyphs.length; j++){
+      var g2 = B.glyphs[j];
+      if(g2.dead || g2.type === BAR) continue;
+      var s2 = slot(B, g2);
+      place(g2, s2.x + ox, s2.y + oy, th2, sc2, true);
+      g2.el.style.opacity = (B.bh && B.bh.fade != null) ? B.bh.fade : (B.bhFade != null ? B.bhFade : '');
     }
   }
-  for(k=0;k<freeL.length;k++){
-    var d=freeL[k];
-    if(d.dead){freeL.splice(k,1);k--;continue;}
-    if(d.state==='free')placeLetter(d);
+  for(k = 0; k < freeL.length; k++){
+    var d = freeL[k];
+    if(d.dead){ freeL.splice(k, 1); k--; continue; }
+    if(d.state === 'free') placeLetter(d);
   }
 }
+
 function cursorTick(){
-  if(grab.kind==='body'){cv.style.cursor='grabbing';return;}
-  if(grab.kind==='letter'){cv.style.cursor=findMergeTarget(grab.obj)?'copy':'grabbing';return;}
-  if(grab.kind==='rot'){cv.style.cursor='grabbing';return;}
-  cv.style.cursor='default';
+  if(grab.kind === 'body'){ cv.style.cursor = 'grabbing'; return; }
+  if(grab.kind === 'letter'){ cv.style.cursor = findMergeTarget(grab.obj) ? 'copy' : 'grabbing'; return; }
+  if(grab.kind === 'rot'){ cv.style.cursor = 'grabbing'; return; }
+  cv.style.cursor = 'default';
 }
-var G_RANGE=360, G_PULL=52000;
+
+var G_RANGE = 300, G_PULL = 46000;
+
 function stepGravity(dt){
-  var gravs=[];
-  for(var g=0;g<bodies.length;g++){var Gb=bodies[g];if(Gb.isWell)gravs.push(Gb);}
+  var gravs = [];
+  for(var g = 0; g < bodies.length; g++){ var Gb = bodies[g]; if(Gb.isWell) gravs.push(Gb); }
   function releaseGo(Bb){
-    var go=Bb.go;if(!go)return;
-    if(go.bin&&go.by&&bodies.indexOf(go.by)>=0){go.by.goB=null;}
-    var tx=-Math.sin(go.ang),ty=Math.cos(go.ang);
-    Bb.vx=tx*go.w*go.rad;Bb.vy=ty*go.w*go.rad;
-    Bb.go=null;
+    var go = Bb.go; if(!go) return;
+    if(go.bin && go.by && bodies.indexOf(go.by) >= 0){ go.by.goB = null; }
+    var tx = -Math.sin(go.ang), ty = Math.cos(go.ang);
+    Bb.vx = tx * go.w * go.rad; Bb.vy = ty * go.w * go.rad;
+    Bb.go = null;
   }
-  for(var i=0;i<bodies.length;i++){
-    var B=bodies[i];
-    if(B.kind)continue;
-    if(B.bh)continue;
-    if(B.isWell)continue;
-    if(grab.kind==='body'&&grab.obj===B)continue;
+  for(var i = 0; i < bodies.length; i++){
+    var B = bodies[i];
+    if(B.kind || B.bh || B.isWell) continue;
+    if(grab.kind === 'body' && grab.obj === B) continue;
     if(B.goB){
-      if(bodies.indexOf(B.goB)<0)B.goB=null;
+      if(bodies.indexOf(B.goB) < 0) B.goB = null;
       continue;
     }
-    var best=null,bd=1e9,bcx=0,bcy=0;
-    for(var k=0;k<gravs.length;k++){
-      var Gb2=gravs[k];
-      var dx=B.x-Gb2.x,dy=B.y-Gb2.y;
-      var d=Math.hypot(dx,dy);
-      if(d<bd){bd=d;best=Gb2;bcx=Gb2.x;bcy=Gb2.y;}
+    var best = null, bd = 1e9, bcx = 0, bcy = 0;
+    for(var k = 0; k < gravs.length; k++){
+      var Gb2 = gravs[k];
+      var dx = B.x - Gb2.x, dy = B.y - Gb2.y;
+      var d = Math.hypot(dx, dy);
+      if(d < bd){ bd = d; best = Gb2; bcx = Gb2.x; bcy = Gb2.y; }
     }
-    var isRot=(B.hasV&&B.hasR&&B.vCount>=2);
-    var wellHolds=!!(best&&bd<=G_RANGE&&!(grab.kind==='body'&&grab.obj===best));
-    if(isRot&&!wellHolds){
-      var P=null,pp=1e9;
-      if(B.go&&B.go.bin){
-        var oldP=B.go.by;
-        if(bodies.indexOf(oldP)>=0){P=oldP;pp=Math.hypot(P.x-B.x,P.y-B.y);}
-        else B.go=null;
+    var isRot = (B.hasV && B.hasR && B.vCount >= 2);
+    var wellHolds = !!(best && bd <= G_RANGE && !(grab.kind === 'body' && grab.obj === best));
+    if(isRot && !wellHolds){
+      var P = null, pp = 1e9;
+      if(B.go && B.go.bin){
+        var oldP = B.go.by;
+        if(bodies.indexOf(oldP) >= 0){ P = oldP; pp = Math.hypot(P.x - B.x, P.y - B.y); }
+        else B.go = null;
       }
       if(!P){
-        for(var pk=0;pk<bodies.length;pk++){
-          var C=bodies[pk];
-          if(C===B)continue;
-          if(!(C.hasV&&C.hasR&&C.vCount>=2))continue;
-          if(C.go&&C.go.bin)continue;
-          if(C.goB&&C.goB!==B)continue;
-          if(grab.kind==='body'&&grab.obj===C)continue;
-          var dp=Math.hypot(C.x-B.x,C.y-B.y);
-          if(dp<pp){pp=dp;P=C;}
+        for(var pk = 0; pk < bodies.length; pk++){
+          var C = bodies[pk];
+          if(C === B || !(C.hasV && C.hasR && C.vCount >= 2)) continue;
+          if(C.go && C.go.bin) continue;
+          if(C.goB && C.goB !== B) continue;
+          if(grab.kind === 'body' && grab.obj === C) continue;
+          var dp = Math.hypot(C.x - B.x, C.y - B.y);
+          if(dp < pp){ pp = dp; P = C; }
         }
       }
-      if(P&&pp<=G_RANGE){
-        var m1=B.mass||1,m2=P.mass||1,ms=m1+m2;
-        if(!B.go||B.go.by!==P){
-          var cmx=(m1*B.x+m2*P.x)/ms,cmy=(m1*B.y+m2*P.y)/ms;
-          B.go={by:P,cmx:cmx,cmy:cmy,ang:Math.atan2(B.y-cmy,B.x-cmx),
-                rad:Math.max(pp,10),target:clamp(pp,80,300),
-                rB:m2/ms,rP:m1/ms,
-                w:1.1*Math.sqrt(ms/Math.max(pp,40)),bin:1};
-          P.goB=B;
+      if(P && pp <= G_RANGE){
+        var m1 = B.mass || 1, m2 = P.mass || 1, ms = m1 + m2;
+        if(!B.go || B.go.by !== P){
+          var cmx = (m1 * B.x + m2 * P.x) / ms, cmy = (m1 * B.y + m2 * P.y) / ms;
+          B.go = {
+            by: P, cmx: cmx, cmy: cmy, ang: Math.atan2(B.y - cmy, B.x - cmx),
+            rad: Math.max(pp, 10), target: clamp(pp, 80, 260),
+            rB: m2 / ms, rP: m1 / ms,
+            w: 1.1 * Math.sqrt(ms / Math.max(pp, 40)), bin: 1
+          };
+          P.goB = B;
         }
-        if(grab.kind==='body'&&grab.obj===P){
-          var gX=B.go,txd=-Math.sin(gX.ang),tyd=Math.cos(gX.ang);
-          B.vx=txd*gX.w*(gX.rad*gX.rB);B.vy=tyd*gX.w*(gX.rad*gX.rB);
-          P.goB=null;B.go=null;
-        }else{
-          var go=B.go;
-          go.rad+=(go.target-go.rad)*Math.min(1,dt*0.9);
-          go.ang+=dt*go.w;
-          var cA=Math.cos(go.ang),sA=Math.sin(go.ang);
-          var rB=go.rad*go.rB,rP=go.rad*go.rP;
-          var bx=go.cmx+rB*cA,by=go.cmy+rB*sA;
-          var px=go.cmx-rP*cA,py=go.cmy-rP*sA;
-          var shx=0,shy=0;
-          if(bx>W-B.hw)shx=W-bx-B.hw;else if(bx<B.hw)shx=B.hw-bx;
-          if(by>groundY-B.hh)shy=groundY-by-B.hh;else if(by<B.hh)shy=B.hh-by;
-          if(px>W-P.hw)shx=W-px-P.hw;else if(px<P.hw)shx=P.hw-px;
-          if(py>groundY-P.hh)shy=groundY-py-P.hh;else if(py<P.hh)shy=P.hh-py;
-          if(shx||shy){go.cmx+=shx;go.cmy+=shy;bx+=shx;by+=shy;px+=shx;py+=shy;}
-          B.x=bx;B.y=by;B.vx=0;B.vy=0;
-          P.x=px;P.y=py;
-          P.vx=-go.w*rP*sA;P.vy=go.w*rP*cA;
+        if(grab.kind === 'body' && grab.obj === P){
+          var gX = B.go, txd = -Math.sin(gX.ang), tyd = Math.cos(gX.ang);
+          B.vx = txd * gX.w * (gX.rad * gX.rB); B.vy = tyd * gX.w * (gX.rad * gX.rB);
+          P.goB = null; B.go = null;
+        } else {
+          var go = B.go;
+          go.rad += (go.target - go.rad) * Math.min(1, dt * 0.9);
+          go.ang += dt * go.w;
+          var cA = Math.cos(go.ang), sA = Math.sin(go.ang);
+          var rB = go.rad * go.rB, rP = go.rad * go.rP;
+          var bx = go.cmx + rB * cA, by = go.cmy + rB * sA;
+          var px = go.cmx - rP * cA, py = go.cmy - rP * sA;
+          var shx = 0, shy = 0;
+          if(bx > W - B.hw) shx = W - bx - B.hw; else if(bx < B.hw) shx = B.hw - bx;
+          if(by > groundY - B.hh) shy = groundY - by - B.hh; else if(by < B.hh) shy = B.hh - by;
+          if(px > W - P.hw) shx = W - px - P.hw; else if(px < P.hw) shx = P.hw - px;
+          if(py > groundY - P.hh) shy = groundY - py - P.hh; else if(py < P.hh) shy = P.hh - py;
+          if(shx || shy){ go.cmx += shx; go.cmy += shy; bx += shx; by += shy; px += shx; py += shy; }
+          B.x = bx; B.y = by; B.vx = 0; B.vy = 0;
+          P.x = px; P.y = py;
+          P.vx = -go.w * rP * sA; P.vy = go.w * rP * cA;
           continue;
         }
       }
-      if(B.go)releaseGo(B);
-    }else{
-      if(B.go)releaseGo(B);
+      if(B.go) releaseGo(B);
+    } else {
+      if(B.go) releaseGo(B);
     }
-    if(!best||bd>G_RANGE)continue;
-    var inv=1/Math.max(bd,24);
-    var ax=(bcx-B.x)*inv, ay=(bcy-B.y)*inv;
-    var a=G_PULL/(bd+80);
-    B.vx+=ax*a*dt; B.vy+=ay*a*dt;
+    if(!best || bd > G_RANGE) continue;
+    var inv = 1 / Math.max(bd, 24);
+    var ax = (bcx - B.x) * inv, ay = (bcy - B.y) * inv;
+    var a = G_PULL / (bd + 80);
+    B.vx += ax * a * dt; B.vy += ay * a * dt;
   }
 }
+
 function stepField(dt){
-  var bsrcs=[],esrcs=[];
-  for(var i=0;i<bodies.length;i++){var S=bodies[i];if(S.kind==='B')bsrcs.push(S);else if(S.kind==='E')esrcs.push(S);}
-  if(!bsrcs.length&&!esrcs.length){
-    for(var kb=0;kb<bodies.length;kb++){
-      var Kb=bodies[kb];
-      if(Kb.kind==='B'||Kb.kind==='E'||Kb.kind==='T')continue;
-      if(grab.kind==='body'&&grab.obj===Kb)continue;
-      if(Kb.kind==='q'||Kb.kind==='I'){
-        if(Kb.x<24){Kb.x=24;Kb.vx=Math.abs(Kb.vx)*0.5;}
-        if(Kb.x>W-24){Kb.x=W-24;Kb.vx=-Math.abs(Kb.vx)*0.5;}
-        if(Kb.y<24){Kb.y=24;Kb.vy=Math.abs(Kb.vy)*0.5;}
-        if(Kb.y>groundY-24){Kb.y=groundY-24;Kb.vy=-Math.abs(Kb.vy)*0.5;}
+  var bsrcs = [], esrcs = [];
+  for(var i = 0; i < bodies.length; i++){ var S = bodies[i]; if(S.kind === 'B') bsrcs.push(S); else if(S.kind === 'E') esrcs.push(S); }
+  if(!bsrcs.length && !esrcs.length){
+    for(var kb = 0; kb < bodies.length; kb++){
+      var Kb = bodies[kb];
+      if(Kb.kind === 'B' || Kb.kind === 'E' || Kb.kind === 'T') continue;
+      if(grab.kind === 'body' && grab.obj === Kb) continue;
+      if(Kb.kind === 'q' || Kb.kind === 'I'){
+        if(Kb.x < 24){ Kb.x = 24; Kb.vx = Math.abs(Kb.vx) * 0.5; }
+        if(Kb.x > W - 24){ Kb.x = W - 24; Kb.vx = -Math.abs(Kb.vx) * 0.5; }
+        if(Kb.y < 24){ Kb.y = 24; Kb.vy = Math.abs(Kb.vy) * 0.5; }
+        if(Kb.y > groundY - 24){ Kb.y = groundY - 24; Kb.vy = -Math.abs(Kb.vy) * 0.5; }
       }
     }
     return;
   }
-  for(var j=0;j<bodies.length;j++){
-    var O=bodies[j];
-    if(O.kind==='B'||O.kind==='E')continue;
-    if(O.bh)continue;
-    if(grab.kind==='body'&&grab.obj===O)continue;
-    var src=null,bd=1e9;
-    for(var s=0;s<bsrcs.length;s++){
-      var S2=bsrcs[s];
-      var d=Math.hypot(O.x-S2.x,O.y-S2.y);
-      if(d<=S2.fieldR&&d<bd){bd=d;src=S2;}
+  for(var j = 0; j < bodies.length; j++){
+    var O = bodies[j];
+    if(O.kind === 'B' || O.kind === 'E' || O.bh) continue;
+    if(grab.kind === 'body' && grab.obj === O) continue;
+    var src = null, bd = 1e9;
+    for(var s = 0; s < bsrcs.length; s++){
+      var S2 = bsrcs[s];
+      var d = Math.hypot(O.x - S2.x, O.y - S2.y);
+      if(d <= S2.fieldR && d < bd){ bd = d; src = S2; }
     }
-    var esrc=null,ed=1e9;
-    for(var se=0;se<esrcs.length;se++){
-      var SE=esrcs[se],hsE=SE.fieldR/2;
-      if(Math.abs(O.x-SE.x)<=hsE&&Math.abs(O.y-SE.y)<=hsE){
-        var de=Math.abs(O.x-SE.x)+Math.abs(O.y-SE.y);
-        if(de<ed){ed=de;esrc=SE;}
+    var esrc = null, ed = 1e9;
+    for(var se = 0; se < esrcs.length; se++){
+      var SE = esrcs[se], hsE = SE.fieldR / 2;
+      if(Math.abs(O.x - SE.x) <= hsE && Math.abs(O.y - SE.y) <= hsE){
+        var de = Math.abs(O.x - SE.x) + Math.abs(O.y - SE.y);
+        if(de < ed){ ed = de; esrc = SE; }
       }
     }
-    var dir=src?(src.Bz>0?1:-1):1;
-    if(O.kind==='q'){
+    var dir = src ? (src.Bz > 0 ? 1 : -1) : 1;
+    if(O.kind === 'q'){
       if(src){
-        var qc=O.qsign*dir;
-        var th=-qc*Q_FORCE*dt;
-        var cs=Math.cos(th),sn=Math.sin(th);
-        var nvx=cs*O.vx-sn*O.vy;
-        var nvy=sn*O.vx+cs*O.vy;
-        O.vx=nvx;O.vy=nvy;
+        var qc = O.qsign * dir;
+        var th = -qc * Q_FORCE * dt;
+        var cs = Math.cos(th), sn = Math.sin(th);
+        var nvx = cs * O.vx - sn * O.vy;
+        var nvy = sn * O.vx + cs * O.vy;
+        O.vx = nvx; O.vy = nvy;
       }
       if(esrc){
-        var eth=esrc.th||0, ea=E_FIELD_ACC*O.qsign*dt;
-        O.vx+=Math.cos(eth)*ea;
-        O.vy+=Math.sin(eth)*ea;
+        var eth = esrc.th || 0, ea = E_FIELD_ACC * O.qsign * dt;
+        O.vx += Math.cos(eth) * ea; O.vy += Math.sin(eth) * ea;
       }
-      O.fieldState=src?{active:true}:null;
-    }else if(O.kind==='I'){
+      O.fieldState = src ? { active: true } : null;
+    } else if(O.kind === 'I'){
       if(src){
-        var fy=A_FORCE*O.Isign*dir;
-        O.vy+=fy*dt;
-        var dmp=Math.pow(0.94,dt*60);
-        O.vx*=dmp;O.vy*=dmp;
+        var fy = A_FORCE * O.Isign * dir;
+        O.vy += fy * dt;
+        var dmp = Math.pow(0.94, dt * 60);
+        O.vx *= dmp; O.vy *= dmp;
       }
     }
   }
-  for(var k=0;k<bodies.length;k++){
-    var K=bodies[k];
-    if(K.kind==='B'||K.kind==='E'||K.kind==='T')continue;
-    if(K.bh)continue;
-    if(K.x<24){K.x=24;K.vx=Math.abs(K.vx)*0.5;}
-    if(K.x>W-24){K.x=W-24;K.vx=-Math.abs(K.vx)*0.5;}
-    if(K.y<24){K.y=24;K.vy=Math.abs(K.vy)*0.5;}
-    if(K.y>groundY-24){K.y=groundY-24;K.vy=-Math.abs(K.vy)*0.5;}
+  for(var k = 0; k < bodies.length; k++){
+    var K = bodies[k];
+    if(K.kind === 'B' || K.kind === 'E' || K.kind === 'T' || K.bh) continue;
+    if(K.x < 24){ K.x = 24; K.vx = Math.abs(K.vx) * 0.5; }
+    if(K.x > W - 24){ K.x = W - 24; K.vx = -Math.abs(K.vx) * 0.5; }
+    if(K.y < 24){ K.y = 24; K.vy = Math.abs(K.vy) * 0.5; }
+    if(K.y > groundY - 24){ K.y = groundY - 24; K.vy = -Math.abs(K.vy) * 0.5; }
   }
 }
-var lastT=0;
+
+var lastT = 0;
 function frame(now){
   requestAnimationFrame(frame);
-  if(!lastT)lastT=now;
-  var dt=Math.min(0.033,Math.max(0.008,(now-lastT)/1000));
-  lastT=now;
+  if(!lastT) lastT = now;
+  var dt = Math.min(0.033, Math.max(0.008, (now - lastT) / 1000));
+  lastT = now;
   stepPhysics(dt);
   collideBodies();
   stepGravity(dt);
@@ -2629,12 +2844,14 @@ function frame(now){
   syncGlyphs();
   cursorTick();
 }
+
 function init(){
   resize();
-  window.addEventListener('resize',resize);
-  [mO,M2O,gO,aO,vO,rO,halfO,muO,cO,GO,tO,BO,qO,IO,EO].forEach(function(d){d.cat=1;});
-  dockLetter(mO);dockLetter(M2O);dockLetter(gO);dockLetter(aO);dockLetter(vO);dockLetter(rO);dockLetter(halfO);dockLetter(muO);dockLetter(cO);dockLetter(GO);dockLetter(tO);
-  dockLetter(BO);dockLetter(EO);dockLetter(qO);dockLetter(IO);
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', function(){ setTimeout(resize, 200); });
+  [mO, M2O, gO, aO, vO, rO, halfO, muO, cO, GO, tO, BO, qO, IO, EO].forEach(function(d){ d.cat = 1; });
+  dockLetter(mO); dockLetter(M2O); dockLetter(gO); dockLetter(aO); dockLetter(vO); dockLetter(rO); dockLetter(halfO); dockLetter(muO); dockLetter(cO); dockLetter(GO); dockLetter(tO);
+  dockLetter(BO); dockLetter(EO); dockLetter(qO); dockLetter(IO);
   requestAnimationFrame(frame);
 }
 init();
